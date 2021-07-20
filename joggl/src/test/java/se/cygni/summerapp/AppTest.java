@@ -1,4 +1,4 @@
-package com.cygni.summerapp;
+package se.cygni.summerapp;
 
 import static org.junit.Assert.assertTrue;
 
