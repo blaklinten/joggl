@@ -3,8 +3,7 @@ package se.cygni.summerapp;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
-public class Entry
-{
+public class Entry {
 	private String Client;
 	private String Description;
 	private String Name;
@@ -13,8 +12,7 @@ public class Entry
 	private LocalDateTime endTime;
 
 	public Entry(String client, String description,
-				String name, String project)
-	{
+				String name, String project) {
 		this.Client = client;
 		this.Description = description;
 		this.Name = name;
@@ -23,77 +21,62 @@ public class Entry
 		this.endTime = null;
 	}
 
-	public String getName() 
-	{
+	public String getName() {
 		return Name;
 	}
 
-	private void setName(String name) 
-	{
+	private void setName(String name) {
 		Name = name;
 	}
 
-	public String getClient() 
-	{
+	public String getClient() {
 		return Client;
 	}
 
-	private void setClient(String client) 
-	{
+	private void setClient(String client) {
 		Client = client;
 	}
 
-	public String getDescription() 
-	{
+	public String getDescription() {
 		return Description;
 	}
 
-	private void setDescription(String description) 
-	{
+	private void setDescription(String description) {
 		Description = description;
 	}
 
-	public String getProject() 
-	{
+	public String getProject() {
 		return Project;
 	}
 
-	private void setProject(String project) 
-	{
+	private void setProject(String project) {
 		Project = project;
 	}
 
-	public LocalDateTime getStartTime() 
-	{
+	public LocalDateTime getStartTime() {
 		return startTime;
 	}
 
-	private void setStartTime(LocalDateTime startTime) 
-	{
+	private void setStartTime(LocalDateTime startTime) {
 		this.startTime = startTime;
 	}
 
-	public LocalDateTime getEndTime() 
-	{
+	public LocalDateTime getEndTime() {
 		return endTime;
 	}
 
-	private void setEndTime(LocalDateTime endTime) 
-	{
+	private void setEndTime(LocalDateTime endTime) {
 		this.endTime = endTime;
 	}
 
-	public LocalDateTime stopEntry()
-	{
+	public LocalDateTime stopEntry() {
 		LocalDateTime endTime = LocalDateTime.now();
 		this.setEndTime(endTime);
 		return endTime;
 	}
 
-	public void update(String property, String value)
-	{
-		switch (property)
-		{
+	public void update(String property, String value) {
+		switch (property) {
 			case "Client": this.setClient(value);
 			break;
 
@@ -110,10 +93,8 @@ public class Entry
 		}
 	}
 
-	public void update(String property, LocalDateTime value)
-	{
-		switch (property)
-		{
+	public void update(String property, LocalDateTime value) {
+		switch (property) {
 			case "StartTime": this.setStartTime(value);
 			break;
 
@@ -122,6 +103,15 @@ public class Entry
 
 			default: throw new NoSuchElementException("No such property: \"" + property + "\"");
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "Name:" + this.Name + "\n" +
+			"@" + this.Project + "\n" +
+			this.Description + "\n" +
+			"for " + this.Client + "\n" +
+			"Started at " + this.startTime;
 	}
 }
 
