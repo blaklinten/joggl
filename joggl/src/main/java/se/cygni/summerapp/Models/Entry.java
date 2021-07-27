@@ -1,4 +1,4 @@
-package se.cygni.summerapp;
+package se.cygni.summerapp.Models;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
