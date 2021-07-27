@@ -75,7 +75,7 @@ public class Entry {
 		return endTime;
 	}
 
-	public void update(String property, String value) {
+	public void update(String property, String value) throws NoSuchElementException{
 		switch (property) {
 			case "Client": this.setClient(value);
 			break;
@@ -93,7 +93,7 @@ public class Entry {
 		}
 	}
 
-	public void update(String property, LocalDateTime value) {
+	public void update(String property, LocalDateTime value) throws NoSuchElementException{
 		switch (property) {
 			case "StartTime": this.setStartTime(value);
 			break;

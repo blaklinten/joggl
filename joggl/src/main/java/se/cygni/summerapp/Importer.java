@@ -1,14 +1,9 @@
 package se.cygni.summerapp;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.sql.SQLException;
 
 
 public class Importer {
@@ -18,28 +13,26 @@ public class Importer {
 
 	private static Path trackMeBaseDir = Paths.get("/home/blaklinten/importer/");
 
-	public static void main (String[] args) throws SQLException {
-		try (Connection conn  = DriverManager.getConnection(dbURL, dbUser, dbPassword)) {
-		/*
-			try (Statement stmt = conn.createStatement()) {
-				try (ResultSet rs = stmt.executeQuery("SELECT * FROM entries")) {
-					rs.first();
-					System.out.println(rs.getString(2));
-				}
-			}
-		*/
+	public static void main (String[] args) {
+
+	DatabaseHandler dbHandler = new DatabaseHandler(dbURL, dbUser, dbPassword);
+		try{
+			dbHandler.connect();
 
 			try {
-				walkTheFileSystem(trackMeBaseDir, conn);
+				walkTheFileSystem(trackMeBaseDir);
 			}
 			catch (IOException e) {
 				System.err.println(e.getMessage());
 			}
 		}
+		catch (SQLException e){
+			System.err.println(e.getMessage());
+		}
 	}
 
-	public static void walkTheFileSystem(Path baseDir, Connection conn) throws IOException {
-		ListFiles lf = new ListFiles(conn);
+	public static void walkTheFileSystem(Path baseDir) throws IOException {
+		ListFiles lf = new ListFiles();
 		Files.walkFileTree(trackMeBaseDir, lf);
 	}
 	
@@ -48,14 +41,12 @@ public class Importer {
 class ListFiles extends SimpleFileVisitor<Path> {
 	private final int indentionAmount = 3;
 	private int indentionLevel;
-	private Connection conn;
 
 	private String client;
 	private String project;
 	private String name;
 
 	private Integer oldDirDepth = 0;
-
 	private DirectoryLevel currentDirectoryLevel = DirectoryLevel.Base;
 
 	private enum DirectoryLevel {
@@ -66,11 +57,6 @@ class ListFiles extends SimpleFileVisitor<Path> {
 
 	public ListFiles() {
 		indentionLevel = 0;
-	}
-
-	public ListFiles(Connection conn) {
-		indentionLevel = 0;
-		this.conn = conn;
 	}
 
 	private void indent() {
