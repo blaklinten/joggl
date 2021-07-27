@@ -1,4 +1,6 @@
-package se.cygni.summerapp;
+package se.cygni.summerapp.CLI;
+
+import se.cygni.summerapp.Models.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

@@ -1,4 +1,6 @@
-package se.cygni.summerapp;
+package se.cygni.summerapp.Utils;
+
+import se.cygni.summerapp.Database.*;
 
 import java.io.IOException;
 import java.nio.file.*;
