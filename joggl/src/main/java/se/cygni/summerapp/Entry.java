@@ -4,53 +4,53 @@ import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 public class Entry {
-	private String Client;
-	private String Description;
-	private String Name;
-	private String Project;
+	private String client;
+	private String description;
+	private String name;
+	private String project;
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
 
 	public Entry(String client, String description,
 				String name, String project) {
-		this.Client = client;
-		this.Description = description;
-		this.Name = name;
-		this.Project = project;
+		this.client = client;
+		this.description = description;
+		this.name = name;
+		this.project = project;
 		this.startTime = LocalDateTime.now();
 		this.endTime = null;
 	}
 
 	public String getName() {
-		return Name;
+		return name;
 	}
 
 	private void setName(String name) {
-		Name = name;
+		this.name = name;
 	}
 
 	public String getClient() {
-		return Client;
+		return client;
 	}
 
 	private void setClient(String client) {
-		Client = client;
+		this.client = client;
 	}
 
 	public String getDescription() {
-		return Description;
+		return description;
 	}
 
 	private void setDescription(String description) {
-		Description = description;
+		this.description = description;
 	}
 
 	public String getProject() {
-		return Project;
+		return project;
 	}
 
 	private void setProject(String project) {
-		Project = project;
+		this.project = project;
 	}
 
 	public LocalDateTime getStartTime() {
@@ -107,10 +107,10 @@ public class Entry {
 
 	@Override
 	public String toString() {
-		return "Name:" + this.Name + "\n" +
-			"@" + this.Project + "\n" +
-			this.Description + "\n" +
-			"for " + this.Client + "\n" +
+		return "Name:" + this.name + "\n" +
+			"@" + this.project + "\n" +
+			this.description + "\n" +
+			"for " + this.client + "\n" +
 			"Started at " + this.startTime;
 	}
 }
