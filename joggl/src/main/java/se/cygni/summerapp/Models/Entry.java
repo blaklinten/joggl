@@ -1,6 +1,7 @@
 package se.cygni.summerapp.Models;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.NoSuchElementException;
 
 public class Entry {
@@ -11,14 +12,18 @@ public class Entry {
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
 
+	private DateTimeFormatter dateTimeFormat;
+	private String format = "yyyy-MM-dd HH:mm:ss a";
+
 	public Entry(String client, String description,
 				String name, String project) {
 		this.client = client;
 		this.description = description;
 		this.name = name;
 		this.project = project;
-		this.startTime = LocalDateTime.now();
+		this.startTime = null;
 		this.endTime = null;
+		this.dateTimeFormat = DateTimeFormatter.ofPattern(format);
 	}
 
 	public String getName() {
@@ -57,6 +62,10 @@ public class Entry {
 		return startTime;
 	}
 
+	public String getStartTimeAsString() {
+		return startTime.format(dateTimeFormat);
+	}
+
 	private void setStartTime(LocalDateTime startTime) {
 		this.startTime = startTime;
 	}
@@ -65,14 +74,24 @@ public class Entry {
 		return endTime;
 	}
 
+	public String getEndTimeAsString() {
+		return endTime.format(dateTimeFormat);
+	}
+
 	private void setEndTime(LocalDateTime endTime) {
 		this.endTime = endTime;
 	}
 
-	public LocalDateTime stopEntry() {
+	public String start() {
+		LocalDateTime startTime = LocalDateTime.now();
+		this.setStartTime(startTime);
+		return startTime.format(dateTimeFormat);
+	}
+
+	public String stop() {
 		LocalDateTime endTime = LocalDateTime.now();
 		this.setEndTime(endTime);
-		return endTime;
+		return endTime.format(dateTimeFormat);
 	}
 
 	public void update(String property, String value) throws NoSuchElementException{
@@ -111,7 +130,7 @@ public class Entry {
 			"@" + this.project + "\n" +
 			this.description + "\n" +
 			"for " + this.client + "\n" +
-			"Started at " + this.startTime;
+			"Started at " + getStartTimeAsString();
 	}
 }
 

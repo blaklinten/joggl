@@ -20,7 +20,10 @@ public class EntryTest
 	Entry anEntry = new Entry(client, description, name, project);
 
 	@Test
-	public void createEntryTest() {
+	public void startEntryTest() {
+		assertTrue(anEntry.getStartTime() == null);
+		anEntry.start();
+
 		assertTrue(anEntry.getClient() == client);
 		assertTrue(anEntry.getDescription() == description);
 		assertTrue(anEntry.getProject() == project);
@@ -31,7 +34,9 @@ public class EntryTest
 
 	@Test
 	public void endEntryTest() {
-		anEntry.stopEntry();
+		anEntry.start();
+		anEntry.stop();
+
 		assertTrue(anEntry.getEndTime() != null);
 		assertTrue(anEntry.getEndTime().isAfter(anEntry.getStartTime()));
 		assertTrue(anEntry.getEndTime().isBefore(LocalDateTime.now()));
