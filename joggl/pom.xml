@@ -7,6 +7,11 @@
   <groupId>se.cygni.summerapp</groupId>
   <artifactId>joggl</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.1.8.RELEASE</version>
+  </parent>
 
   <name>joggl</name>
   <!-- FIXME change it to the project's website -->
@@ -21,6 +26,10 @@
 
   <dependencies>
     <dependency>
+	  <groupId>org.springframework.boot</groupId>
+	  <artifactId>spring-boot-starter-web</artifactId>
+	</dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
@@ -31,6 +40,15 @@
       <artifactId>mariadb-java-client</artifactId>
       <version>2.1.2</version>
     </dependency>
+	<dependency>
+	  <groupId>org.springframework.boot</groupId>
+	  <artifactId>spring-boot-starter-jdbc</artifactId>
+	</dependency>
+	<dependency>
+	  <groupId>org.springframework.boot</groupId>
+	  <artifactId>spring-boot-starter-test</artifactId>
+	  <scope>test</scope>
+	</dependency>
   </dependencies>
 
   <build>
@@ -75,6 +93,10 @@
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.0.0</version>
         </plugin>
+        <plugin>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-maven-plugin</artifactId>
+		</plugin>
       </plugins>
     </pluginManagement>
   </build>
