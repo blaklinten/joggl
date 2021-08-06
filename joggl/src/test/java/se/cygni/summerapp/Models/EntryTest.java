@@ -3,9 +3,10 @@ package se.cygni.summerapp.Models;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for an Entry
@@ -17,7 +18,7 @@ public class EntryTest
 	String project = "Development";
 	String description = "A bunch of tests";
 
-	Entry anEntry = new Entry(client, description, name, project);
+	Entry anEntry = new Entry(name, client, project, description);
 
 	@Test
 	public void startEntryTest() {
@@ -28,15 +29,29 @@ public class EntryTest
 		assertTrue(anEntry.getDescription() == description);
 		assertTrue(anEntry.getProject() == project);
 		assertTrue(anEntry.getName() == name);
+		assertTrue(anEntry.getStartTime() != null);
 		assertTrue(LocalDateTime.now().isAfter(anEntry.getStartTime()));
 		assertTrue(anEntry.getEndTime() == null);
 	}
 
 	@Test
 	public void endEntryTest() {
+		final CountDownLatch waiter = new CountDownLatch(1);
+
 		anEntry.start();
+		try{
+		waiter.await(1000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			System.err.println(e.getMessage());
+		}
 		anEntry.stop();
 
+		assertTrue(anEntry.getClient() == client);
+		assertTrue(anEntry.getDescription() == description);
+		assertTrue(anEntry.getProject() == project);
+		assertTrue(anEntry.getName() == name);
+		assertTrue(anEntry.getStartTime() != null);
+		assertTrue(LocalDateTime.now().isAfter(anEntry.getStartTime()));
 		assertTrue(anEntry.getEndTime() != null);
 		assertTrue(anEntry.getEndTime().isAfter(anEntry.getStartTime()));
 		assertTrue(anEntry.getEndTime().isBefore(LocalDateTime.now()));
@@ -53,64 +68,28 @@ public class EntryTest
 		LocalDateTime oldEndTime = anEntry.getEndTime();
 		LocalDateTime newEndTime = LocalDateTime.now();
 
-		try {
-		anEntry.update("Client", newClient);
-		}
-		catch (NoSuchElementException e) {
-			System.err.println(e.getMessage());
-			assertTrue(false);
-		}
+		anEntry.update(Entry.Property.CLIENT, newClient);
 		assertTrue(anEntry.getClient() == newClient);
 		assertTrue(anEntry.getClient() != client);
 
-		try {
-		anEntry.update("Description", newDescription);
-		}
-		catch (NoSuchElementException e) {
-			System.err.println(e.getMessage());
-			assertTrue(false);
-		}
+		anEntry.update(Entry.Property.DESCRIPTION, newDescription);
 		assertTrue(anEntry.getDescription() == newDescription);
 		assertTrue(anEntry.getDescription() != description);
 
-		try {
-		anEntry.update("Project", newProject);
-		}
-		catch (NoSuchElementException e) {
-			System.err.println(e.getMessage());
-			assertTrue(false);
-		}
+		anEntry.update(Entry.Property.PROJECT, newProject);
 		assertTrue(anEntry.getProject() == newProject);
 		assertTrue(anEntry.getProject() != project);
 
 
-		try {
-		anEntry.update("Name", newName);
-		}
-		catch (NoSuchElementException e) {
-			System.err.println(e.getMessage());
-			assertTrue(false);
-		}
+		anEntry.update(Entry.Property.NAME, newName);
 		assertTrue(anEntry.getName() == newName);
 		assertTrue(anEntry.getName() != name);
 
-		try {
-		anEntry.update("StartTime", newStartTime);
-		}
-		catch (NoSuchElementException e) {
-			System.err.println(e.getMessage());
-			assertTrue(false);
-		}
+		anEntry.update(Entry.Property.STARTTIME, newStartTime);
 		assertTrue(anEntry.getStartTime() == newStartTime);
 		assertTrue(anEntry.getStartTime() != oldStartTime);
 
-		try {
-		anEntry.update("EndTime", newEndTime);
-		}
-		catch (NoSuchElementException e) {
-			System.err.println(e.getMessage());
-			assertTrue(false);
-		}
+		anEntry.update(Entry.Property.ENDTIME, newEndTime);
 		assertTrue(anEntry.getEndTime() == newEndTime);
 		assertTrue(anEntry.getEndTime() != oldEndTime);
 	}
