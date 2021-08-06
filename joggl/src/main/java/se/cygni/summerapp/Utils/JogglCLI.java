@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class JogglCLI {
+	/*
 	private static Boolean exiting = false;
 	private static Scanner scanner = new Scanner(System.in);
 	private static Entry entry = null;
@@ -123,4 +124,5 @@ public class JogglCLI {
 		clearScreen();
 		System.out.println(entry.toString());
 	}
+	*/
 }

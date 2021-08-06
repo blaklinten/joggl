@@ -1,20 +1,23 @@
 package se.cygni.summerapp;
 
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * Unit test for simple App.
  */
-public class AppTest 
-{
+@SpringBootTest
+public class AppTest {
+	@Autowired
+	private WebController controller;
     /**
      * Rigorous Test :-)
-     */
+	*/
     @Test
-    public void shouldAnswerWithTrue()
-    {
-        assertTrue( true );
+    public void sanityCheck() throws Exception{
+		assertThat(controller).isNotNull();
     }
 }

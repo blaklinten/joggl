@@ -2,9 +2,20 @@ package se.cygni.summerapp.Models;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.NoSuchElementException;
+
+import se.cygni.summerapp.Database.*;
 
 public class Entry {
+
+	public enum Property {
+		CLIENT,
+		DESCRIPTION,
+		NAME,
+		PROJECT,
+		STARTTIME,
+		ENDTIME
+	}
+
 	private String client;
 	private String description;
 	private String name;
@@ -15,8 +26,8 @@ public class Entry {
 	private DateTimeFormatter dateTimeFormat;
 	private String format = "yyyy-MM-dd HH:mm:ss a";
 
-	public Entry(String client, String description,
-				String name, String project) {
+	public Entry(String name, String client,
+				String project, String description) {
 		this.client = client;
 		this.description = description;
 		this.name = name;
@@ -63,7 +74,11 @@ public class Entry {
 	}
 
 	public String getStartTimeAsString() {
+		if (startTime != null){
 		return startTime.format(dateTimeFormat);
+		} else {
+			return "null";
+		}
 	}
 
 	private void setStartTime(LocalDateTime startTime) {
@@ -75,7 +90,11 @@ public class Entry {
 	}
 
 	public String getEndTimeAsString() {
-		return endTime.format(dateTimeFormat);
+		if (endTime != null){
+			return endTime.format(dateTimeFormat);
+		} else {
+			return "null";
+		}
 	}
 
 	private void setEndTime(LocalDateTime endTime) {
@@ -94,33 +113,33 @@ public class Entry {
 		return endTime.format(dateTimeFormat);
 	}
 
-	public void update(String property, String value) throws NoSuchElementException{
-		switch (property) {
-			case "Client": this.setClient(value);
+	public void update(Property prop, String value) {
+		switch (prop) {
+			case CLIENT: this.setClient(value);
 			break;
 
-			case "Project": this.setProject(value);
+			case PROJECT: this.setProject(value);
 			break;
 
-			case "Description": this.setDescription(value);
+			case DESCRIPTION: this.setDescription(value);
 			break;
 
-			case "Name": this.setName(value);
+			case NAME: this.setName(value);
 			break;
 
-			default: throw new NoSuchElementException("No such property: \"" + property + "\"");
+			default: return;
 		}
 	}
 
-	public void update(String property, LocalDateTime value) throws NoSuchElementException{
-		switch (property) {
-			case "StartTime": this.setStartTime(value);
+	public void update(Property prop, LocalDateTime value) {
+		switch (prop) {
+			case STARTTIME: this.setStartTime(value);
 			break;
 
-			case "EndTime": this.setEndTime(value);
+			case ENDTIME: this.setEndTime(value);
 			break;
 
-			default: throw new NoSuchElementException("No such property: \"" + property + "\"");
+			default: return;
 		}
 	}
 
@@ -131,6 +150,16 @@ public class Entry {
 			this.description + "\n" +
 			"for " + this.client + "\n" +
 			"Started at " + getStartTimeAsString();
+	}
+
+	public EntrySchema toEntrySchema(){
+		return new EntrySchema(
+				this.name,
+				this.client,
+				this.project,
+				this.description,
+				this.getStartTimeAsString(),
+				this.getEndTimeAsString());
 	}
 }
 

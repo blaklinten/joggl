@@ -1,37 +1,24 @@
 package se.cygni.summerapp.Utils;
 
-import se.cygni.summerapp.Database.*;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
-import java.sql.SQLException;
-
-
 public class Importer {
-	private static String dbURL = "jdbc:mariadb://localhost/test";
-	private static String dbUser = "blaklinten";
-	private static String dbPassword = "";
 
 	private static Path trackMeBaseDir = Paths.get("/home/blaklinten/importer/");
 
 	public static void main (String[] args) {
 
-	DatabaseHandler dbHandler = new DatabaseHandler(dbURL, dbUser, dbPassword);
-		try{
-			dbHandler.connect();
-
-			try {
-				walkTheFileSystem(trackMeBaseDir);
-			}
-			catch (IOException e) {
-				System.err.println(e.getMessage());
-			}
+	/*
+		try {
+			walkTheFileSystem(trackMeBaseDir);
 		}
-		catch (SQLException e){
+		catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
+	*/
 	}
 
 	public static void walkTheFileSystem(Path baseDir) throws IOException {
