@@ -1,4 +1,4 @@
-package se.cygni.summerapp.Database;
+package xyz.blaklinten.joggl.Database;
 
 import java.util.List;
 

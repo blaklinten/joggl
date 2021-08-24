@@ -1,9 +1,9 @@
-package se.cygni.summerapp.Models;
+package xyz.blaklinten.joggl.Models;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import se.cygni.summerapp.Database.*;
+import xyz.blaklinten.joggl.Database.*;
 
 public class Entry {
 

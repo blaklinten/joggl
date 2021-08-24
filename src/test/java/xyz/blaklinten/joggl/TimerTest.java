@@ -1,4 +1,4 @@
-package se.cygni.summerapp;
+package xyz.blaklinten.joggl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
