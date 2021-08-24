@@ -1,4 +1,4 @@
-package se.cygni.summerapp.Utils;
+package xyz.blaklinten.joggl.Utils;
 
 
 import java.io.IOException;

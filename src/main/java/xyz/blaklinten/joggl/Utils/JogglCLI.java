@@ -1,6 +1,6 @@
-package se.cygni.summerapp.CLI;
+package xyz.blaklinten.joggl.CLI;
 
-import se.cygni.summerapp.Models.*;
+import xyz.blaklinten.joggl.Models.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

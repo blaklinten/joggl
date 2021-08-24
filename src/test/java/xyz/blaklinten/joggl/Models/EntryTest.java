@@ -1,4 +1,4 @@
-package se.cygni.summerapp.Models;
+package xyz.blaklinten.joggl.Models;
 
 import static org.junit.Assert.assertTrue;
 
