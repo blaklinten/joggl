@@ -2,26 +2,40 @@ package xyz.blaklinten.joggl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import xyz.blaklinten.joggl.Database.Repository;
-import xyz.blaklinten.joggl.Models.Entry;
 
 @RestController
 public class WebController{
 
-	@Autowired
-	private Repository repository;
-
-	@GetMapping("/test")
-	public String test(){
-		String name = "Lucas", client = "Cygni", description = "Ett test", project = "SummerApp";
-		Entry testEntry = new Entry(name, client, project, description);
-		testEntry.start();
-		testEntry.stop();
-		repository.save(testEntry.toEntrySchema());
-		return "Hello Spring!";
+	@PostMapping("/start-timer")
+	public String StartTimer(){
+		return "Started";
 	}
 
+	@GetMapping("/stop-timer")
+	public String StopTimer(){
+		return "Stopped";
+	}
+
+	@GetMapping("/get-status")
+	public String GetStatus(){
+		return "Maybe running";
+	}
+
+	@GetMapping("/sum-entries-by-name")
+	public String SumEntriesByName(){
+		return "Summed by name";
+	}
+
+	@GetMapping("/sum-entries-by-client")
+	public String SumEntriesByClient(){
+		return "Summed by client";
+	}
+	
+	@GetMapping("/sum-entries-by-project")
+	public String SumEntriesByProject(){
+		return "Summed by project";
+	}
 }
 
