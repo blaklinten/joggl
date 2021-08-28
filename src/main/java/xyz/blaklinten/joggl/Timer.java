@@ -1,18 +1,20 @@
 package xyz.blaklinten.joggl;
 
+import org.springframework.stereotype.Component;
+
 import xyz.blaklinten.joggl.Models.Entry;
 
+@Component
 public class Timer {
 
 	private Entry entry = null;
 
-	public void startTimer(String name, String client,
-			String project, String description) throws TimerAlreadyRunningException {
+	public void start(Entry newEntry) throws TimerAlreadyRunningException{
 		if (entry != null) {
 			throw new TimerAlreadyRunningException("A timer is already running!");
 		}
 
-		entry = new Entry(name, client, project, description);
+		entry = newEntry;
 		entry.start();
 	}
 
@@ -22,13 +24,13 @@ public class Timer {
 		}
 	}
 
-	private class NoActiveTimerException extends Exception {
+	public class NoActiveTimerException extends Exception {
 		public NoActiveTimerException(String errorMessage){
 			super(errorMessage);
 		}
 	}
 
-	private class TimerAlreadyRunningException extends Exception {
+	public class TimerAlreadyRunningException extends Exception {
 		public TimerAlreadyRunningException(String errorMessage){
 			super(errorMessage);
 		}
