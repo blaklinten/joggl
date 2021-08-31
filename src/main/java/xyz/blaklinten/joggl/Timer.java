@@ -1,5 +1,7 @@
 package xyz.blaklinten.joggl;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Component;
 
 import xyz.blaklinten.joggl.Models.Entry;
@@ -14,16 +16,16 @@ public class Timer {
 			throw new TimerAlreadyRunningException("A timer is already running!");
 		} else {
 			entry = newEntry;
-			entry.start();
+			entry.update(Entry.Property.STARTTIME, LocalDateTime.now());
 		}
 	}
 
 	public void stop() throws NoActiveTimerException {
-		if (entry == null){
+		if (entry != null && entry.getEndTime() == null){
+			entry.update(Entry.Property.ENDTIME, LocalDateTime.now());
+		} else {
 			throw new NoActiveTimerException("No Timer to stop!");
 		}
-		entry.stop();
-		entry  = null;
 	}
 
 	public class NoActiveTimerException extends Exception {
