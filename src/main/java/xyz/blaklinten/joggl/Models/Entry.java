@@ -16,6 +16,7 @@ public class Entry {
 		ENDTIME
 	}
 
+	private long id;
 	private String client;
 	private String description;
 	private String name;
@@ -26,6 +27,19 @@ public class Entry {
 	private DateTimeFormatter dateTimeFormat;
 	private String format = "yyyy-MM-dd HH:mm:ss a";
 
+	public Entry(long id, String name, String client,
+				String project, String description,
+				String startTime, String endTime) {
+		this.id = id;
+		this.client = client;
+		this.description = description;
+		this.name = name;
+		this.project = project;
+		this.startTime = LocalDateTime.parse(startTime);
+		this.endTime = LocalDateTime.parse(endTime);
+		this.dateTimeFormat = DateTimeFormatter.ofPattern(format);
+	}
+
 	public Entry(String name, String client,
 				String project, String description) {
 		this.client = client;
@@ -35,6 +49,10 @@ public class Entry {
 		this.startTime = null;
 		this.endTime = null;
 		this.dateTimeFormat = DateTimeFormatter.ofPattern(format);
+	}
+
+	public long getID() {
+		return id;
 	}
 
 	public String getName() {
