@@ -3,8 +3,6 @@ package xyz.blaklinten.joggl.Models;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import xyz.blaklinten.joggl.Database.*;
-
 public class Entry {
 
 	public enum Property {
@@ -24,9 +22,6 @@ public class Entry {
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
 
-	private DateTimeFormatter dateTimeFormat;
-	private String format = "yyyy-MM-dd HH:mm:ss a";
-
 	public Entry(long id, String name, String client,
 				String project, String description,
 				String startTime, String endTime) {
@@ -37,7 +32,6 @@ public class Entry {
 		this.project = project;
 		this.startTime = LocalDateTime.parse(startTime);
 		this.endTime = LocalDateTime.parse(endTime);
-		this.dateTimeFormat = DateTimeFormatter.ofPattern(format);
 	}
 
 	public Entry(String name, String client,
@@ -48,7 +42,6 @@ public class Entry {
 		this.project = project;
 		this.startTime = null;
 		this.endTime = null;
-		this.dateTimeFormat = DateTimeFormatter.ofPattern(format);
 	}
 
 	public long getID() {
@@ -93,7 +86,7 @@ public class Entry {
 
 	public String getStartTimeAsString() {
 		if (startTime != null){
-		return startTime.format(dateTimeFormat);
+		return startTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		} else {
 			return "null";
 		}
@@ -109,7 +102,7 @@ public class Entry {
 
 	public String getEndTimeAsString() {
 		if (endTime != null){
-			return endTime.format(dateTimeFormat);
+			return endTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		} else {
 			return "null";
 		}
@@ -155,17 +148,8 @@ public class Entry {
 			"@" + this.project + "\n" +
 			this.description + "\n" +
 			"for " + this.client + "\n" +
-			"Started at " + getStartTimeAsString();
-	}
-
-	public EntrySchema toEntrySchema(){
-		return new EntrySchema(
-				this.name,
-				this.client,
-				this.project,
-				this.description,
-				this.getStartTimeAsString(),
-				this.getEndTimeAsString());
+			"Started at " + getStartTimeAsString() + "\n" + 
+			"Ended at " + getEndTimeAsString() + "\n";
 	}
 }
 
