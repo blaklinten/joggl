@@ -119,18 +119,6 @@ public class Entry {
 		this.endTime = endTime;
 	}
 
-	public String start() {
-		LocalDateTime startTime = LocalDateTime.now();
-		this.setStartTime(startTime);
-		return startTime.format(dateTimeFormat);
-	}
-
-	public String stop() {
-		LocalDateTime endTime = LocalDateTime.now();
-		this.setEndTime(endTime);
-		return endTime.format(dateTimeFormat);
-	}
-
 	public void update(Property prop, String value) {
 		switch (prop) {
 			case CLIENT: this.setClient(value);

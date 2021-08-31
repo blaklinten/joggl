@@ -23,7 +23,7 @@ public class EntryTest
 	@Test
 	public void startEntryTest() {
 		assertTrue(anEntry.getStartTime() == null);
-		anEntry.start();
+		anEntry.update(Entry.Property.STARTTIME, LocalDateTime.now());
 
 		assertTrue(anEntry.getClient() == client);
 		assertTrue(anEntry.getDescription() == description);
@@ -38,13 +38,13 @@ public class EntryTest
 	public void endEntryTest() {
 		final CountDownLatch waiter = new CountDownLatch(1);
 
-		anEntry.start();
+		anEntry.update(Entry.Property.STARTTIME, LocalDateTime.now());
 		try{
 		waiter.await(1000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			System.err.println(e.getMessage());
 		}
-		anEntry.stop();
+		anEntry.update(Entry.Property.ENDTIME, LocalDateTime.now());
 
 		assertTrue(anEntry.getClient() == client);
 		assertTrue(anEntry.getDescription() == description);
