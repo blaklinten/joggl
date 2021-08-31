@@ -7,12 +7,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import xyz.blaklinten.joggl.Database.DatabaseHandler;
 import xyz.blaklinten.joggl.Models.Entry;
 
 @RestController
 public class WebController{
 
-	@Autowired private Timer timer;
+	@Autowired
+	private Timer timer;
+
+	@Autowired
+	private DatabaseHandler dbHandler;
 
 	@PostMapping(
 		value = "/start-timer",
