@@ -9,15 +9,42 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import xyz.blaklinten.joggl.Models.Entry;
-
 @Entity
 @Table(name = "entries")
 public class EntrySchema implements Serializable {
 
+	public long getId() {
+		return id;
+	}
+
+	public String getClient() {
+		return client;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getProject() {
+		return project;
+	}
+
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
+
 
 	@Column(name = "client")
 	private String client;
@@ -49,16 +76,5 @@ public class EntrySchema implements Serializable {
 		this.project = project;
 		this.startTime = startTime;
 		this.endTime = endTime;
-	}
-
-	public Entry toEntry(){
-		return new Entry(
-				this.id,
-				this.name,
-				this.client,
-				this.project,
-				this.description,
-				this.startTime,
-				this.endTime);
 	}
 }
