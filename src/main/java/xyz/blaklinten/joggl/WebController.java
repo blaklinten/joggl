@@ -44,6 +44,7 @@ public class WebController{
 		Entry stoppedEntry;
 		try {
 			stoppedEntry = timer.stop();
+			dbHandler.save(stoppedEntry);
 		} catch (Timer.NoActiveTimerException e) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
 		}
