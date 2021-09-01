@@ -20,16 +20,16 @@ public class Timer {
 		}
 	}
 
-	public String stop() throws NoActiveTimerException {
-		String endTime;
+	public Entry stop() throws NoActiveTimerException {
+		Entry stoppedEntry;
 		if (entry != null && entry.getEndTime() == null){
 			entry.update(Entry.Property.ENDTIME, LocalDateTime.now());
-			endTime = entry.getEndTimeAsString();
+			stoppedEntry = entry;
 			entry = null;
 		} else {
 			throw new NoActiveTimerException("No Timer to stop!");
 		}
-		return endTime;
+		return stoppedEntry;
 	}
 
 	public Boolean isRunning(){
