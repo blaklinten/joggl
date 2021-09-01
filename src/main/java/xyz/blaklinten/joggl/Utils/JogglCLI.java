@@ -1,4 +1,4 @@
-package xyz.blaklinten.joggl.CLI;
+package xyz.blaklinten.joggl.Utils;
 
 import xyz.blaklinten.joggl.Models.*;
 
