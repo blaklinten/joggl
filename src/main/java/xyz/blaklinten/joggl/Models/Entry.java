@@ -51,6 +51,10 @@ public class Entry {
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
 
+	public Entry(){
+		 super();
+	 }
+
 	public Entry(long id, String name, String client,
 				String project, String description,
 				String startTime, String endTime) {

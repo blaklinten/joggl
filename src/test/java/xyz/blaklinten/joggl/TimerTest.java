@@ -40,6 +40,7 @@ public class TimerTest {
 		
 		assertThat(anEntry.getStartTime()).isNotNull();
 		assertTrue(anEntry.getStartTime().isBefore(LocalDateTime.now()));
+		assertTrue(timer.isRunning());
 	}
 
 	@Test
@@ -78,6 +79,7 @@ public class TimerTest {
 		assertThat(endTime).isNotNull();
 		assertThat(startTime).isNotNull();
 		assertTrue(endTime.isAfter(startTime));
+		assertThat(timer.isRunning()).isFalse();
 	}
 
 	@Test

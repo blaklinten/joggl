@@ -35,7 +35,13 @@ public class WebController{
 
 	@GetMapping("/stop-timer")
 	public String StopTimer(){
-		return "Stopped";
+		String endTime;
+		try {
+			endTime = timer.stop();
+		} catch (Timer.NoActiveTimerException e) {
+			return e.getMessage();
+		}
+		return "Stopped timer at " + endTime;
 	}
 
 	@GetMapping("/get-status")

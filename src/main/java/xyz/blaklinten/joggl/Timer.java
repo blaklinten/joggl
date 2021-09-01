@@ -20,12 +20,19 @@ public class Timer {
 		}
 	}
 
-	public void stop() throws NoActiveTimerException {
+	public String stop() throws NoActiveTimerException {
+		LocalDateTime endTime = LocalDateTime.now();
 		if (entry != null && entry.getEndTime() == null){
-			entry.update(Entry.Property.ENDTIME, LocalDateTime.now());
+			entry.update(Entry.Property.ENDTIME, endTime);
+			entry = null;
 		} else {
 			throw new NoActiveTimerException("No Timer to stop!");
 		}
+		return endTime.toString();
+	}
+
+	public Boolean isRunning(){
+		return (entry != null) ? true : false;
 	}
 
 	public class NoActiveTimerException extends Exception {
