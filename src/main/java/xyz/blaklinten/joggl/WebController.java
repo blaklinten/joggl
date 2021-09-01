@@ -1,5 +1,7 @@
 package xyz.blaklinten.joggl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +18,8 @@ import xyz.blaklinten.joggl.Models.Entry;
 @RestController
 public class WebController{
 
+	private Logger log = LoggerFactory.getLogger(WebController.class);
+
 	@Autowired
 	private Timer timer;
 
@@ -30,11 +34,13 @@ public class WebController{
 	@ResponseBody
 	public Entry StartTimer(@RequestBody Entry entry){
 		try{
-		timer.start(entry);
+			log.info("Incoming start request");
+			timer.start(entry);
 		}
 		catch (Timer.TimerAlreadyRunningException e){
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
 		}
+		log.info("Started entry " + entry.getName());
 		return entry;
 	}
 
@@ -43,11 +49,13 @@ public class WebController{
 	public Entry StopTimer(){
 		Entry stoppedEntry;
 		try {
+			log.info("Incoming stop request");
 			stoppedEntry = timer.stop();
 			dbHandler.save(stoppedEntry);
 		} catch (Timer.NoActiveTimerException e) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
 		}
+		log.info("Stopped entry " + stoppedEntry.getName());
 		return stoppedEntry;
 	}
 
