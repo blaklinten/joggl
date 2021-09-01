@@ -1,5 +1,6 @@
 {
 	"name" : "Blaklinten",
 	"Project" : "test",
-	"Client" : "testing"
+	"Client" : "testing",
+	"description" : "Simple test"
 }
