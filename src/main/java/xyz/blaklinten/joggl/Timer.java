@@ -2,6 +2,8 @@ package xyz.blaklinten.joggl;
 
 import java.time.LocalDateTime;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import xyz.blaklinten.joggl.Models.Entry;
@@ -9,14 +11,19 @@ import xyz.blaklinten.joggl.Models.Entry;
 @Component
 public class Timer {
 
+	private Logger log = LoggerFactory.getLogger(Timer.class);
+
 	private Entry entry = null;
 
 	public void start(Entry newEntry) throws TimerAlreadyRunningException{
 		if (entry != null) {
-			throw new TimerAlreadyRunningException("A timer is already running!");
+			String errorMessage = "A timer is already running!";
+			log.error(errorMessage);
+			throw new TimerAlreadyRunningException(errorMessage);
 		} else {
 			entry = newEntry;
 			entry.update(Entry.Property.STARTTIME, LocalDateTime.now());
+			log.info("Starting new entry");
 		}
 	}
 
@@ -26,8 +33,11 @@ public class Timer {
 			entry.update(Entry.Property.ENDTIME, LocalDateTime.now());
 			stoppedEntry = entry;
 			entry = null;
+			log.info("Stopping entry " + stoppedEntry.getName());
 		} else {
-			throw new NoActiveTimerException("No Timer to stop!");
+			String errorMessage = "No Timer to stop!";
+			log.error(errorMessage);
+			throw new NoActiveTimerException(errorMessage);
 		}
 		return stoppedEntry;
 	}

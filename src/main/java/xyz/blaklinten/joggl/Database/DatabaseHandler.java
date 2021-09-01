@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +14,8 @@ import xyz.blaklinten.joggl.Models.Entry;
 
 @Component
 public class DatabaseHandler {
+
+	private Logger log = LoggerFactory.getLogger(DatabaseHandler.class);
 
 	@Autowired
 	Repository repo;
@@ -38,15 +42,20 @@ public class DatabaseHandler {
 	}
 
 	public long save(Entry e){
+		log.info("Saving entry " + e.getName() + " to database");
 		EntrySchema es = repo.save(entryToSchema(e));
+		log.info("Got ID " + es.getId() + " from database");
 		return es.getId();
 	}
 
 	public Entry getEntryByID(long id) throws NoSuchElementException {
+		log.info("Searching for entry with ID " + id);
 		Optional<EntrySchema> result = repo.findById(id);
 		
 		if (result.isEmpty()){
-			throw new NoSuchElementException("No entry with ID " + id + " exists.");
+			String errorMessage = "No entry with ID " + id + " exists.";
+			log.error(errorMessage);
+			throw new NoSuchElementException(errorMessage);
 		} else {
 			EntrySchema es = result.get();
 			Entry e = schemaToEntry(es);
@@ -67,11 +76,14 @@ public class DatabaseHandler {
 				result = repo.findByProject(value);
 				break;
 			default:
-				result = new ArrayList<EntrySchema>();
-				break;
+				String errorMessage = "Invalid property";
+				log.error(errorMessage);
+				throw new NoSuchElementException(errorMessage);
 		}
 		if (result.isEmpty()){
-			throw new NoSuchElementException("No entry with " + prop.toString() + " " + value + " exists.");
+			String errorMessage = "No entry with " + prop.toString() + " " + value + " exists.";
+			log.error(errorMessage);
+			throw new NoSuchElementException(errorMessage);
 		} else {
 			ArrayList<Entry> e = new ArrayList<Entry>();
  		   result.forEach( es -> {
