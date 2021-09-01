@@ -1,11 +1,14 @@
 package xyz.blaklinten.joggl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import xyz.blaklinten.joggl.Database.DatabaseHandler;
 import xyz.blaklinten.joggl.Models.Entry;
@@ -21,27 +24,30 @@ public class WebController{
 
 	@PostMapping(
 		value = "/start-timer",
-		consumes = {MediaType.APPLICATION_JSON_VALUE})
+		consumes = {MediaType.APPLICATION_JSON_VALUE},
+		produces = MediaType.APPLICATION_JSON_VALUE)
 
-	public String StartTimer(@RequestBody Entry entry){
+	@ResponseBody
+	public Entry StartTimer(@RequestBody Entry entry){
 		try{
 		timer.start(entry);
 		}
 		catch (Timer.TimerAlreadyRunningException e){
-			return e.getMessage();
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
 		}
-		return "Started " + entry.getName() + " at time " + entry.getStartTimeAsString();
+		return entry;
 	}
 
 	@GetMapping("/stop-timer")
-	public String StopTimer(){
-		String endTime;
+	@ResponseBody
+	public Entry StopTimer(){
+		Entry stoppedEntry;
 		try {
-			endTime = timer.stop();
+			stoppedEntry = timer.stop();
 		} catch (Timer.NoActiveTimerException e) {
-			return e.getMessage();
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
 		}
-		return "Stopped timer at " + endTime;
+		return stoppedEntry;
 	}
 
 	@GetMapping("/get-status")
