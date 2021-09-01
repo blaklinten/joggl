@@ -21,14 +21,15 @@ public class Timer {
 	}
 
 	public String stop() throws NoActiveTimerException {
-		LocalDateTime endTime = LocalDateTime.now();
+		String endTime;
 		if (entry != null && entry.getEndTime() == null){
-			entry.update(Entry.Property.ENDTIME, endTime);
+			entry.update(Entry.Property.ENDTIME, LocalDateTime.now());
+			endTime = entry.getEndTimeAsString();
 			entry = null;
 		} else {
 			throw new NoActiveTimerException("No Timer to stop!");
 		}
-		return endTime.toString();
+		return endTime;
 	}
 
 	public Boolean isRunning(){
