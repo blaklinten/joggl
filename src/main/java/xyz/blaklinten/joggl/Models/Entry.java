@@ -11,7 +11,36 @@ public class Entry {
 		NAME,
 		PROJECT,
 		STARTTIME,
-		ENDTIME
+		ENDTIME;
+
+		@Override
+		public String toString(){
+			String name = "";
+			switch (ordinal()){
+				case 0:
+					name = "client";
+					break;
+				case 1:
+					name = "description";
+					break;
+				case 2:
+					name = "name";
+					break;
+				case 3:
+					name = "project";
+					break;
+				case 4:
+					name = "start time";
+					break;
+				case 5:
+					name = "end time";
+					break;
+				default:
+					name = "";
+					break;
+			}
+			return name;
+		}
 	}
 
 	private long id;
