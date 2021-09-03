@@ -1,8 +1,13 @@
 package xyz.blaklinten.joggl.Models;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class Entry {
 
 	public enum Property {
@@ -184,5 +189,16 @@ public class Entry {
 			"Started at " + getStartTimeAsString() + "\n" + 
 			"Ended at " + getEndTimeAsString() + "\n";
 	}
-}
 
+	public Duration getDuration() {
+		return Duration.between(startTime, endTime);
+	}
+
+	public static Duration sum(List<Entry> entries) {
+		Duration result = Duration.ZERO;
+		for ( Entry e : entries) {
+			result = result.plus(e.getDuration());
+		}
+		return result;
+	}
+}
