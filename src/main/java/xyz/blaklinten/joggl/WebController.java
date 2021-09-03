@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import xyz.blaklinten.joggl.Database.DatabaseHandler;
+import xyz.blaklinten.joggl.Database.EntrySchema;
 import xyz.blaklinten.joggl.Models.Entry;
 
 @RestController
@@ -32,7 +33,7 @@ public class WebController{
 		produces = MediaType.APPLICATION_JSON_VALUE)
 
 	@ResponseBody
-	public Entry StartTimer(@RequestBody Entry entry){
+	public EntrySchema StartTimer(@RequestBody Entry entry){
 		try{
 			log.info("Incoming start request");
 			timer.start(entry);
@@ -42,12 +43,12 @@ public class WebController{
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
 		}
 		log.info("Started entry " + entry.getName());
-		return entry;
+		return dbHandler.entryToSchema(entry);
 	}
 
 	@GetMapping("/stop-timer")
 	@ResponseBody
-	public Entry StopTimer(){
+	public EntrySchema StopTimer(){
 		Entry stoppedEntry;
 		try {
 			log.info("Incoming stop request");
@@ -58,13 +59,20 @@ public class WebController{
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
 		}
 		log.info("Stopped entry " + stoppedEntry.getName());
-		return stoppedEntry;
+		return dbHandler.entryToSchema(stoppedEntry);
 	}
 
 	@GetMapping("/get-status")
 	@ResponseBody
 	public TimerStatus GetStatus(){
-		return timer.getCurrentStatus();
+		log.info("Incoming status request");
+		TimerStatus currentStatus;
+		try{
+			currentStatus = timer.getCurrentStatus();
+		} catch (Timer.NoActiveTimerException e){
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+		}
+		return currentStatus;
 	}
 
 	@GetMapping("/sum-entries-by-name")
