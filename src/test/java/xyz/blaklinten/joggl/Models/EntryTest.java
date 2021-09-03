@@ -1,5 +1,6 @@
 package xyz.blaklinten.joggl.Models;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
@@ -67,6 +68,13 @@ public class EntryTest
 		assertTrue(anEntry.getStartTime() != null);
 		assertTrue(LocalDateTime.now().isAfter(anEntry.getStartTime()));
 		assertTrue(anEntry.getEndTime() == null);
+	}
+
+	@Test
+	public void CalculateDurationOfRunningEntryTest(){
+		anEntry.update(Entry.Property.STARTTIME, LocalDateTime.now());
+		assertTrue(anEntry.getEndTime() == null);
+		assertFalse(anEntry.getDuration().isZero());
 	}
 
 	@Test

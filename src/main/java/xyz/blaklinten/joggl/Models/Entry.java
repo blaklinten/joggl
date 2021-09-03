@@ -191,7 +191,11 @@ public class Entry {
 	}
 
 	public Duration getDuration() {
-		return Duration.between(startTime, endTime);
+		if (endTime != null){
+			return Duration.between(startTime, endTime);
+		} else {
+			return Duration.between(startTime, LocalDateTime.now());
+		}
 	}
 
 	public static Duration sum(List<Entry> entries) {
