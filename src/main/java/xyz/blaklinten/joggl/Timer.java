@@ -46,6 +46,16 @@ public class Timer {
 		return (entry != null) ? true : false;
 	}
 
+	public TimerStatus getCurrentStatus() throws NoActiveTimerException {
+		if (isRunning()) {
+			return new TimerStatus(entry);
+		} else {
+			String errorMessage = "No Timer running...";
+			log.error(errorMessage);
+			throw new NoActiveTimerException(errorMessage);
+		}
+	}
+
 	public class NoActiveTimerException extends Exception {
 		public NoActiveTimerException(String errorMessage){
 			super(errorMessage);

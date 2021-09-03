@@ -38,6 +38,7 @@ public class WebController{
 			timer.start(entry);
 		}
 		catch (Timer.TimerAlreadyRunningException e){
+			// TODO Is this a "good" exception to throw? Is there a better way to react when an error occurs?
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
 		}
 		log.info("Started entry " + entry.getName());
@@ -53,6 +54,7 @@ public class WebController{
 			stoppedEntry = timer.stop();
 			dbHandler.save(stoppedEntry);
 		} catch (Timer.NoActiveTimerException e) {
+			// TODO Is this a "good" exception to throw? Is there a better way to react when an error occurs?
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
 		}
 		log.info("Stopped entry " + stoppedEntry.getName());
@@ -60,8 +62,9 @@ public class WebController{
 	}
 
 	@GetMapping("/get-status")
-	public String GetStatus(){
-		return "Maybe running";
+	@ResponseBody
+	public TimerStatus GetStatus(){
+		return timer.getCurrentStatus();
 	}
 
 	@GetMapping("/sum-entries-by-name")
