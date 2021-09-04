@@ -1,6 +1,5 @@
 package xyz.blaklinten.joggl.Database;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -20,35 +19,14 @@ public class DatabaseHandler {
 	@Autowired
 	Repository repo;
 
-	public EntrySchema entryToSchema(Entry e){
-		return new EntrySchema(
-				e.getName(),
-				e.getClient(),
-				e.getProject(),
-				e.getDescription(),
-				e.getStartTimeAsString(),
-				e.getEndTimeAsString());
+	public long save(EntrySchema entryToSave){
+		log.info("Saving entry " + entryToSave.getName() + " to database");
+		EntrySchema savedEntry = repo.save(entryToSave);
+		log.info("Got ID " + savedEntry.getId() + " from database");
+		return savedEntry.getId();
 	}
 
-	public Entry schemaToEntry (EntrySchema es){
-		return new Entry(
-				es.getId(),
-				es.getName(),
-				es.getClient(),
-				es.getProject(),
-				es.getDescription(),
-				es.getStartTime(),
-				es.getEndTime());
-	}
-
-	public long save(Entry e){
-		log.info("Saving entry " + e.getName() + " to database");
-		EntrySchema es = repo.save(entryToSchema(e));
-		log.info("Got ID " + es.getId() + " from database");
-		return es.getId();
-	}
-
-	public Entry getEntryByID(long id) throws NoSuchElementException {
+	public EntrySchema getEntryByID(long id) throws NoSuchElementException {
 		log.info("Searching for entry with ID " + id);
 		Optional<EntrySchema> result = repo.findById(id);
 		
@@ -58,12 +36,11 @@ public class DatabaseHandler {
 			throw new NoSuchElementException(errorMessage);
 		} else {
 			EntrySchema es = result.get();
-			Entry e = schemaToEntry(es);
-			return e;
+			return es;
 		}
 	}
 
-	public List<Entry> getEntriesBy(Entry.Property prop, String value) throws NoSuchElementException {
+	public List<EntrySchema> getEntriesBy(Entry.Property prop, String value) throws NoSuchElementException {
 	List<EntrySchema> result;
 		switch(prop){
 			case NAME:
@@ -85,11 +62,7 @@ public class DatabaseHandler {
 			log.error(errorMessage);
 			throw new NoSuchElementException(errorMessage);
 		} else {
-			ArrayList<Entry> e = new ArrayList<Entry>();
- 		   result.forEach( es -> {
-				e.add(schemaToEntry(es));
-			});
-			return e;
+			return result;
 		}
 	}
 }
