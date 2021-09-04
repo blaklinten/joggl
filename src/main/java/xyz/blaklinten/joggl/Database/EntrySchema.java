@@ -67,9 +67,13 @@ public class EntrySchema implements Serializable {
 	protected EntrySchema(){
 	}
 
-	public EntrySchema(String name, String client,
-				String project, String description,
-				String startTime, String endTime) {
+	public EntrySchema(
+			String name,
+ 		   	String client,
+			String project,
+ 		   	String description,
+			String startTime,
+ 		   	String endTime){
 		this.client = client;
 		this.description = description;
 		this.name = name;
