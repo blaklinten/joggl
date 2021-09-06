@@ -85,7 +85,7 @@ public class Joggl {
 	}
 	
 	public AccumulatedTime sumEntriesbyProject(String project) throws NoSuchElementException {
-		log.info("Incoming sum-by-project");
+		log.info("Incoming sum-by-project request");
 
 		Duration sum =
 			dbHandler.getEntriesBy(Entry.Property.PROJECT, project)
