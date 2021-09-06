@@ -1,4 +1,4 @@
-package xyz.blaklinten.joggl.Models;
+package xyz.blaklinten.joggl;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -20,7 +20,7 @@ public class Entry {
 
 		@Override
 		public String toString(){
-			String name = "";
+			String name;
 			switch (ordinal()){
 				case 0:
 					name = "client";

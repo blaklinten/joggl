@@ -1,4 +1,4 @@
-package xyz.blaklinten.joggl.Database;
+package xyz.blaklinten.joggl.Models;
 
 import java.io.Serializable;
 
@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "entries")
-public class EntrySchema implements Serializable {
+public class EntryModel implements Serializable {
 
 	public long getId() {
 		return id;
@@ -64,10 +64,10 @@ public class EntrySchema implements Serializable {
 	@Column(name = "endTime")
 	private String endTime;
 
-	protected EntrySchema(){
+	protected EntryModel(){
 	}
 
-	public EntrySchema(
+	public EntryModel(
 			String name,
  		   	String client,
 			String project,
