@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import xyz.blaklinten.joggl.Entry;
 import xyz.blaklinten.joggl.Models.TimerStatus;
 
 @Component
@@ -17,44 +16,58 @@ public class Timer {
 	private Entry entry = null;
 
 	public void start(Entry newEntry) throws TimerAlreadyRunningException{
-		if (entry != null) {
-			String errorMessage = "A timer is already running!";
-			log.error(errorMessage);
-			throw new TimerAlreadyRunningException(errorMessage);
-		} else {
+		if (isNotRunning()) {
 			entry = newEntry;
+
 			entry.update(Entry.Property.STARTTIME, LocalDateTime.now());
 			log.info("Starting new entry");
+		}
+		else {
+			String errorMessage = "A timer is already running!";
+
+			log.error(errorMessage);
+			throw new TimerAlreadyRunningException(errorMessage);
 		}
 	}
 
 	public Entry stop() throws NoActiveTimerException {
-		Entry stoppedEntry;
-		if (entry != null && entry.getEndTime() == null){
+
+		if (isRunning()){
 			entry.update(Entry.Property.ENDTIME, LocalDateTime.now());
-			stoppedEntry = entry;
+
+			Entry stoppedEntry = entry;
+
 			entry = null;
+
 			log.info("Stopping entry " + stoppedEntry.getName());
-		} else {
+			return stoppedEntry;
+		}
+		else {
 			String errorMessage = "No Timer to stop!";
+
 			log.error(errorMessage);
 			throw new NoActiveTimerException(errorMessage);
 		}
-		return stoppedEntry;
+	}
+
+	public TimerStatus getCurrentStatus() throws NoActiveTimerException {
+		if (isRunning()) {
+			return new TimerStatus(entry);
+		}
+		else {
+			String errorMessage = "No Timer running...";
+
+			log.error(errorMessage);
+			throw new NoActiveTimerException(errorMessage);
+		}
 	}
 
 	public Boolean isRunning(){
 		return (entry != null) ? true : false;
 	}
 
-	public TimerStatus getCurrentStatus() throws NoActiveTimerException {
-		if (isRunning()) {
-			return new TimerStatus(entry);
-		} else {
-			String errorMessage = "No Timer running...";
-			log.error(errorMessage);
-			throw new NoActiveTimerException(errorMessage);
-		}
+	public Boolean isNotRunning(){
+		return (entry == null) ? true : false;
 	}
 
 	public class NoActiveTimerException extends Exception {

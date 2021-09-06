@@ -70,10 +70,10 @@ public class DatabaseHandlerTest {
 
 	@Test
 	public void saveOneEntryToAndGetByIDFromDatabaseTest(){
-		long id = dbHandler.save(joggl.entryToSchema(anEntry));
+		long id = dbHandler.save(joggl.entryToModel(anEntry));
 
 		try{
-			Entry fromDatabase = joggl.schemaToEntry(dbHandler.getEntryByID(id));
+			Entry fromDatabase = joggl.modelToEntry(dbHandler.getEntryByID(id));
 
 			assertTrue(anEntry.getName().equals(fromDatabase.getName()));
 			assertTrue(anEntry.getClient().equals(fromDatabase.getClient()));
@@ -89,12 +89,12 @@ public class DatabaseHandlerTest {
 
 	@Test
 	public void saveEntriesToDatabaseAndGetByPropertyTest(){
-		dbHandler.save(joggl.entryToSchema(anEntry));
-		dbHandler.save(joggl.entryToSchema(anEntryWithDifferentName));
+		dbHandler.save(joggl.entryToModel(anEntry));
+		dbHandler.save(joggl.entryToModel(anEntryWithDifferentName));
 
 		try{
 			List<Entry> fromDatabaseWithName = dbHandler.getEntriesBy(Entry.Property.NAME, anEntry.getName()).
-				stream().map(es -> joggl.schemaToEntry(es)).collect(Collectors.toList());
+				stream().map(es -> joggl.modelToEntry(es)).collect(Collectors.toList());
 
 			assertTrue(anEntry.getName().equals(fromDatabaseWithName.get(0).getName()));
 			assertTrue(anEntry.getClient().equals(fromDatabaseWithName.get(0).getClient()));
@@ -102,7 +102,7 @@ public class DatabaseHandlerTest {
 			assertTrue(anEntry.getEndTimeAsString().equals(fromDatabaseWithName.get(0).getEndTimeAsString()));
 
 			List<Entry> fromDatabaseWithDifferentName = dbHandler.getEntriesBy(Entry.Property.NAME, anEntryWithDifferentName.getName()).
-				stream().map(es -> joggl.schemaToEntry(es)).collect(Collectors.toList());
+				stream().map(es -> joggl.modelToEntry(es)).collect(Collectors.toList());
 
 			assertTrue(anEntryWithDifferentName.getName().equals(fromDatabaseWithDifferentName.get(0).getName()));
 			assertTrue(anEntryWithDifferentName.getClient().equals(fromDatabaseWithDifferentName.get(0).getClient()));
@@ -112,7 +112,7 @@ public class DatabaseHandlerTest {
 			assertTrue(anEntryWithDifferentName.getEndTimeAsString().equals(fromDatabaseWithDifferentName.get(0).getEndTimeAsString()));
 			
 			List<Entry> fromDatabaseByProject = dbHandler.getEntriesBy(Entry.Property.PROJECT, anEntry.getProject()).
-				stream().map(es -> joggl.schemaToEntry(es)).collect(Collectors.toList());
+				stream().map(es -> joggl.modelToEntry(es)).collect(Collectors.toList());
 			
 			assertTrue(fromDatabaseByProject.size() == 2);
 
@@ -124,16 +124,16 @@ public class DatabaseHandlerTest {
 	@Test
 	public void saveMultipleEntriesToDatabaseAndCountTest(){
 
-		dbHandler.save(joggl.entryToSchema(anEntry));
-		dbHandler.save(joggl.entryToSchema(anEntryWithSameName));
-		dbHandler.save(joggl.entryToSchema(anEntryWithDifferentName));
+		dbHandler.save(joggl.entryToModel(anEntry));
+		dbHandler.save(joggl.entryToModel(anEntryWithSameName));
+		dbHandler.save(joggl.entryToModel(anEntryWithDifferentName));
 
 		try{
 			List<Entry> fromDatabaseByName = dbHandler.getEntriesBy(Entry.Property.NAME, anEntry.getName()).
-				stream().map(es -> joggl.schemaToEntry(es)).collect(Collectors.toList());
+				stream().map(es -> joggl.modelToEntry(es)).collect(Collectors.toList());
 			List<Entry> fromDatabaseAll = new ArrayList<Entry>();
  		   	dbHandler.repo.findAll().forEach( e -> {
-				fromDatabaseAll.add(joggl.schemaToEntry(e));
+				fromDatabaseAll.add(joggl.modelToEntry(e));
 			});
 
 			assertThat(fromDatabaseByName.size()).isEqualTo(2);
