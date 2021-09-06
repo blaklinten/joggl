@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import xyz.blaklinten.joggl.Models.Entry;
+import xyz.blaklinten.joggl.Entry;
+import xyz.blaklinten.joggl.Models.EntryModel;
 
 @Component
 public class DatabaseHandler {
@@ -19,29 +20,29 @@ public class DatabaseHandler {
 	@Autowired
 	Repository repo;
 
-	public long save(EntrySchema entryToSave){
+	public long save(EntryModel entryToSave){
 		log.info("Saving entry " + entryToSave.getName() + " to database");
-		EntrySchema savedEntry = repo.save(entryToSave);
+		EntryModel savedEntry = repo.save(entryToSave);
 		log.info("Got ID " + savedEntry.getId() + " from database");
 		return savedEntry.getId();
 	}
 
-	public EntrySchema getEntryByID(long id) throws NoSuchElementException {
+	public EntryModel getEntryByID(long id) throws NoSuchElementException {
 		log.info("Searching for entry with ID " + id);
-		Optional<EntrySchema> result = repo.findById(id);
+		Optional<EntryModel> result = repo.findById(id);
 		
 		if (result.isEmpty()){
 			String errorMessage = "No entry with ID " + id + " exists.";
 			log.error(errorMessage);
 			throw new NoSuchElementException(errorMessage);
 		} else {
-			EntrySchema es = result.get();
+			EntryModel es = result.get();
 			return es;
 		}
 	}
 
-	public List<EntrySchema> getEntriesBy(Entry.Property prop, String value) throws NoSuchElementException {
-	List<EntrySchema> result;
+	public List<EntryModel> getEntriesBy(Entry.Property prop, String value) throws NoSuchElementException {
+	List<EntryModel> result;
 		switch(prop){
 			case NAME:
 				result = repo.findByName(value);

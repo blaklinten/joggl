@@ -1,5 +1,7 @@
 package xyz.blaklinten.joggl;
 
+import java.time.Duration;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +10,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import xyz.blaklinten.joggl.Database.DatabaseHandler;
-import xyz.blaklinten.joggl.Database.EntrySchema;
-import xyz.blaklinten.joggl.Models.Entry;
+import xyz.blaklinten.joggl.Models.EntryModel;
+import xyz.blaklinten.joggl.Models.AccumulatedTime;
+import xyz.blaklinten.joggl.Entry;
+import xyz.blaklinten.joggl.Models.TimerStatus;
 
 @Component
 public class Joggl {
@@ -21,7 +25,7 @@ public class Joggl {
 	@Autowired
 	private DatabaseHandler dbHandler;
 
-	public EntrySchema startTimer(EntrySchema es){
+	public EntryModel startTimer(EntryModel es){
 		log.info("Incoming start request");
 		Entry newEntry = new Entry(
 				es.getName(),
@@ -39,20 +43,20 @@ public class Joggl {
 		return entryToSchema(newEntry);
 	}
 
-	public EntrySchema stopTimer(){
+	public EntryModel stopTimer(){
 		log.info("Incoming stop request");
 		Entry stoppedEntry;
-		EntrySchema stoppedEntrySchema;
+		EntryModel stoppedEntryModel;
 		try {
 			stoppedEntry = timer.stop();
-			stoppedEntrySchema = entryToSchema(stoppedEntry);
-			dbHandler.save(stoppedEntrySchema);
+			stoppedEntryModel = entryToSchema(stoppedEntry);
+			dbHandler.save(stoppedEntryModel);
 		} catch (Timer.NoActiveTimerException e) {
 			// TODO Is this a "good" exception to throw? Is there a better way to react when an error occurs?
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
 		}
 		log.info("Stopped entry " + stoppedEntry.getName());
-		return stoppedEntrySchema;
+		return stoppedEntryModel;
 	}
 
 	public TimerStatus getStatus(){
@@ -67,8 +71,32 @@ public class Joggl {
 		return currentStatus;
 	}
 
-	public EntrySchema entryToSchema(Entry e){
-		return new EntrySchema(
+	public AccumulatedTime sumEntriesbyName(String name){
+		AccumulatedTime result;
+		Duration sum = Duration.ZERO;
+		dbHandler.getEntriesBy(Entry.Property.NAME, name).forEach(es -> sum.plus(schemaToEntry(es).getDuration()));
+		result = new AccumulatedTime(Entry.Property.NAME.toString(), name, sum);
+		return result;
+	}
+
+	public AccumulatedTime sumEntriesbyClient(String client){
+		AccumulatedTime result;
+		Duration sum = Duration.ZERO;
+		dbHandler.getEntriesBy(Entry.Property.CLIENT, client).forEach(es -> sum.plus(schemaToEntry(es).getDuration()));
+		result = new AccumulatedTime(Entry.Property.CLIENT.toString(), client, sum);
+		return result;
+	}
+	
+	public AccumulatedTime sumEntriesbyProject(String project){
+		AccumulatedTime result;
+		Duration sum = Duration.ZERO;
+		dbHandler.getEntriesBy(Entry.Property.PROJECT, project).forEach(es -> sum.plus(schemaToEntry(es).getDuration()));
+		result = new AccumulatedTime(Entry.Property.PROJECT.toString(), project, sum);
+		return result;
+	}
+
+	public EntryModel entryToSchema(Entry e){
+		return new EntryModel(
 				e.getName(),
 				e.getClient(),
 				e.getProject(),
@@ -77,7 +105,7 @@ public class Joggl {
 				e.getEndTimeAsString());
 	}
 
-	public Entry schemaToEntry (EntrySchema es){
+	public Entry schemaToEntry (EntryModel es){
 		return new Entry(
 				es.getId(),
 				es.getName(),
@@ -87,5 +115,4 @@ public class Joggl {
 				es.getStartTime(),
 				es.getEndTime());
 	}
-
 }

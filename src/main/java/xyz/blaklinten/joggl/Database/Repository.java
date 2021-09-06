@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
+import xyz.blaklinten.joggl.Models.EntryModel;
+
 @Service
-public interface Repository extends CrudRepository<EntrySchema, Long> {
-	List<EntrySchema> findByName (String name);
-	List<EntrySchema> findByClient (String client);
-	List<EntrySchema> findByProject (String project);
+public interface Repository extends CrudRepository<EntryModel, Long> {
+	List<EntryModel> findByName (String name);
+	List<EntryModel> findByClient (String client);
+	List<EntryModel> findByProject (String project);
 }
