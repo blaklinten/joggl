@@ -6,9 +6,9 @@ public class AccumulatedTime {
 
 	private String commonID;
 	private String commonValue;
-	private long hours;
-	private long minutes;
-	private long seconds;
+	private long   hours;
+	private long   minutes;
+	private long   seconds;
 
 	public String getCommon() {
 		return commonID;
@@ -27,10 +27,10 @@ public class AccumulatedTime {
 	}
 
 	public AccumulatedTime(String id, String commonValue, Duration total){
-		this.commonID = id;
+		this.commonID    = id;
 		this.commonValue = commonValue;
-		this.hours = total.toHours();
-		this.minutes = total.toMinutes();
-		this.seconds = total.toSeconds();
+		this.hours       = total.toHoursPart();
+		this.minutes     = total.toMinutesPart();
+		this.seconds     = total.toSecondsPart();
 	}
 }

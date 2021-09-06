@@ -74,11 +74,11 @@ public class EntryModel implements Serializable {
  		   	String description,
 			String startTime,
  		   	String endTime){
-		this.client = client;
+		this.name        = name;
+		this.client      = client;
+		this.project     = project;
 		this.description = description;
-		this.name = name;
-		this.project = project;
-		this.startTime = startTime;
-		this.endTime = endTime;
+		this.startTime   = startTime;
+		this.endTime     = endTime;
 	}
 }

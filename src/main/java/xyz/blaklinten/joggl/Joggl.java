@@ -1,18 +1,16 @@
 package xyz.blaklinten.joggl;
 
 import java.time.Duration;
+import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 
 import xyz.blaklinten.joggl.Database.DatabaseHandler;
 import xyz.blaklinten.joggl.Models.EntryModel;
 import xyz.blaklinten.joggl.Models.AccumulatedTime;
-import xyz.blaklinten.joggl.Entry;
 import xyz.blaklinten.joggl.Models.TimerStatus;
 
 @Component
@@ -25,77 +23,80 @@ public class Joggl {
 	@Autowired
 	private DatabaseHandler dbHandler;
 
-	public EntryModel startTimer(EntryModel es){
+	public EntryModel startTimer(EntryModel es) throws Timer.TimerAlreadyRunningException {
 		log.info("Incoming start request");
+
 		Entry newEntry = new Entry(
 				es.getName(),
 				es.getClient(),
 				es.getProject(),
 				es.getDescription());
-		try{
-			timer.start(newEntry);
-		}
-		catch (Timer.TimerAlreadyRunningException e){
-			// TODO Is this a "good" exception to throw? Is there a better way to react when an error occurs?
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
-		}
+
+		timer.start(newEntry);
+
 		log.info("Started entry " + newEntry.getName());
-		return entryToSchema(newEntry);
+
+		return entryToModel(newEntry);
 	}
 
-	public EntryModel stopTimer(){
+	public EntryModel stopTimer() throws Timer.NoActiveTimerException {
 		log.info("Incoming stop request");
+
 		Entry stoppedEntry;
 		EntryModel stoppedEntryModel;
-		try {
-			stoppedEntry = timer.stop();
-			stoppedEntryModel = entryToSchema(stoppedEntry);
-			dbHandler.save(stoppedEntryModel);
-		} catch (Timer.NoActiveTimerException e) {
-			// TODO Is this a "good" exception to throw? Is there a better way to react when an error occurs?
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
-		}
+
+		stoppedEntry = timer.stop();
+		stoppedEntryModel = entryToModel(stoppedEntry);
+		dbHandler.save(stoppedEntryModel);
+
 		log.info("Stopped entry " + stoppedEntry.getName());
+
 		return stoppedEntryModel;
 	}
 
-	public TimerStatus getStatus(){
+	public TimerStatus getStatus() throws Timer.NoActiveTimerException{
 		log.info("Incoming status request");
-		TimerStatus currentStatus;
-		try{
-			currentStatus = timer.getCurrentStatus();
-		} catch (Timer.NoActiveTimerException e){
-			// TODO Is this a "good" exception to throw? Is there a better way to react when an error occurs?
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
-		}
-		return currentStatus;
+
+		return timer.getCurrentStatus();
 	}
 
-	public AccumulatedTime sumEntriesbyName(String name){
-		AccumulatedTime result;
-		Duration sum = Duration.ZERO;
-		dbHandler.getEntriesBy(Entry.Property.NAME, name).forEach(es -> sum.plus(schemaToEntry(es).getDuration()));
-		result = new AccumulatedTime(Entry.Property.NAME.toString(), name, sum);
-		return result;
+	public AccumulatedTime sumEntriesbyName(String name) throws NoSuchElementException{
+		log.info("Incoming sum-by-name request");
+
+		Duration sum =
+			dbHandler.getEntriesBy(Entry.Property.NAME, name)
+			.stream().map(em -> modelToEntry(em).getDuration())
+			.reduce(Duration.ZERO, (acc, current) -> acc = acc.plus(current));
+
+		return new AccumulatedTime(Entry.Property.NAME.toString(), name, sum);
+
 	}
 
-	public AccumulatedTime sumEntriesbyClient(String client){
-		AccumulatedTime result;
-		Duration sum = Duration.ZERO;
-		dbHandler.getEntriesBy(Entry.Property.CLIENT, client).forEach(es -> sum.plus(schemaToEntry(es).getDuration()));
-		result = new AccumulatedTime(Entry.Property.CLIENT.toString(), client, sum);
-		return result;
+	public AccumulatedTime sumEntriesbyClient(String client) throws NoSuchElementException {
+		log.info("Incoming sum-by-client request");
+		
+		Duration sum =
+			dbHandler.getEntriesBy(Entry.Property.CLIENT, client)
+			.stream().map(em -> modelToEntry(em).getDuration())
+			.reduce(Duration.ZERO, (acc, current) -> acc = acc.plus(current));
+
+		return new AccumulatedTime(Entry.Property.CLIENT.toString(), client, sum);
+
 	}
 	
-	public AccumulatedTime sumEntriesbyProject(String project){
-		AccumulatedTime result;
-		Duration sum = Duration.ZERO;
-		dbHandler.getEntriesBy(Entry.Property.PROJECT, project).forEach(es -> sum.plus(schemaToEntry(es).getDuration()));
-		result = new AccumulatedTime(Entry.Property.PROJECT.toString(), project, sum);
-		return result;
+	public AccumulatedTime sumEntriesbyProject(String project) throws NoSuchElementException {
+		log.info("Incoming sum-by-project");
+
+		Duration sum =
+			dbHandler.getEntriesBy(Entry.Property.PROJECT, project)
+			.stream().map(em -> modelToEntry(em).getDuration())
+			.reduce(Duration.ZERO, (acc, current) -> acc = acc.plus(current));
+
+		return new AccumulatedTime(Entry.Property.PROJECT.toString(), project, sum);
 	}
 
-	public EntryModel entryToSchema(Entry e){
+	public EntryModel entryToModel(Entry e){
+
 		return new EntryModel(
 				e.getName(),
 				e.getClient(),
@@ -105,7 +106,7 @@ public class Joggl {
 				e.getEndTimeAsString());
 	}
 
-	public Entry schemaToEntry (EntryModel es){
+	public Entry modelToEntry (EntryModel es){
 		return new Entry(
 				es.getId(),
 				es.getName(),

@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 public class Entry {
 
 	public enum Property {
-		CLIENT,
-		DESCRIPTION,
 		NAME,
+		CLIENT,
 		PROJECT,
+		DESCRIPTION,
 		STARTTIME,
 		ENDTIME;
 
@@ -23,16 +23,16 @@ public class Entry {
 			String name;
 			switch (ordinal()){
 				case 0:
-					name = "client";
-					break;
-				case 1:
-					name = "description";
-					break;
-				case 2:
 					name = "name";
 					break;
-				case 3:
+				case 1:
+					name = "client";
+					break;
+				case 2:
 					name = "project";
+					break;
+				case 3:
+					name = "description";
 					break;
 				case 4:
 					name = "start time";
@@ -48,11 +48,11 @@ public class Entry {
 		}
 	}
 
-	private long id;
-	private String client;
-	private String description;
-	private String name;
-	private String project;
+	private long          id;
+	private String        name;
+	private String        client;
+	private String        project;
+	private String        description;
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
 
@@ -60,26 +60,34 @@ public class Entry {
 		 super();
 	 }
 
-	public Entry(long id, String name, String client,
-				String project, String description,
-				String startTime, String endTime) {
-		this.id = id;
-		this.client = client;
+	public Entry(
+			long id,
+ 		   	String name,
+ 		   	String client,
+			String project,
+ 		   	String description,
+			String startTime,
+ 		   	String endTime){
+		this.id          = id;
+		this.name        = name;
+		this.client      = client;
+		this.project     = project;
 		this.description = description;
-		this.name = name;
-		this.project = project;
-		this.startTime = LocalDateTime.parse(startTime);
-		this.endTime = LocalDateTime.parse(endTime);
+		this.startTime   = LocalDateTime.parse(startTime);
+		this.endTime     = LocalDateTime.parse(endTime);
 	}
 
-	public Entry(String name, String client,
-				String project, String description) {
-		this.client = client;
+	public Entry(
+			String name,
+ 		   	String client,
+			String project,
+ 		   	String description){
+		this.name        = name;
+		this.client      = client;
+		this.project     = project;
 		this.description = description;
-		this.name = name;
-		this.project = project;
-		this.startTime = null;
-		this.endTime = null;
+		this.startTime   = null;
+		this.endTime     = null;
 	}
 
 	public long getID() {
@@ -152,31 +160,39 @@ public class Entry {
 
 	public void update(Property prop, String value) {
 		switch (prop) {
-			case CLIENT: this.setClient(value);
+			case NAME:
+ 		   		this.setName(value);
 			break;
 
-			case PROJECT: this.setProject(value);
+			case CLIENT:
+				this.setClient(value);
 			break;
 
-			case DESCRIPTION: this.setDescription(value);
+			case PROJECT:
+				this.setProject(value);
 			break;
 
-			case NAME: this.setName(value);
+			case DESCRIPTION:
+ 		   		this.setDescription(value);
 			break;
 
-			default: return;
+			default:
+ 		   		return;
 		}
 	}
 
 	public void update(Property prop, LocalDateTime value) {
 		switch (prop) {
-			case STARTTIME: this.setStartTime(value);
+			case STARTTIME:
+ 			   	this.setStartTime(value);
 			break;
 
-			case ENDTIME: this.setEndTime(value);
+			case ENDTIME:
+ 		   		this.setEndTime(value);
 			break;
 
-			default: return;
+			default:
+ 		   		return;
 		}
 	}
 
@@ -200,7 +216,7 @@ public class Entry {
 
 	public static Duration sum(List<Entry> entries) {
 		Duration result = Duration.ZERO;
-		for ( Entry e : entries) {
+		for(Entry e : entries) {
 			result = result.plus(e.getDuration());
 		}
 		return result;
