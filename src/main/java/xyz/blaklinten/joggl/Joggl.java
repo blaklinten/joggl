@@ -15,7 +15,7 @@ import xyz.blaklinten.joggl.Models.TimerStatus;
 
 @Component
 public class Joggl {
-	private Logger log = LoggerFactory.getLogger(WebController.class);
+	private Logger log = LoggerFactory.getLogger(Joggl.class);
 
 	@Autowired
 	private Timer timer;
@@ -67,36 +67,29 @@ public class Joggl {
 	public AccumulatedTime sumEntriesbyName(String name) throws NoSuchElementException{
 		log.info("Incoming sum-by-name request");
 
-		Duration sum =
-			dbHandler.getEntriesBy(Entry.Property.NAME, name)
-			.stream().map(em -> modelToEntry(em).getDuration())
-			.reduce(Duration.ZERO, (acc, current) -> acc = acc.plus(current));
-
-		return new AccumulatedTime(Entry.Property.NAME.toString(), name, sum);
+		return calculateSum(Entry.Property.NAME, name);
 
 	}
 
 	public AccumulatedTime sumEntriesbyClient(String client) throws NoSuchElementException {
 		log.info("Incoming sum-by-client request");
-		
-		Duration sum =
-			dbHandler.getEntriesBy(Entry.Property.CLIENT, client)
-			.stream().map(em -> modelToEntry(em).getDuration())
-			.reduce(Duration.ZERO, (acc, current) -> acc = acc.plus(current));
 
-		return new AccumulatedTime(Entry.Property.CLIENT.toString(), client, sum);
+		return calculateSum(Entry.Property.CLIENT, client);
 
 	}
 	
 	public AccumulatedTime sumEntriesbyProject(String project) throws NoSuchElementException {
 		log.info("Incoming sum-by-project request");
 
-		Duration sum =
-			dbHandler.getEntriesBy(Entry.Property.PROJECT, project)
+		return calculateSum(Entry.Property.PROJECT, project);
+	}
+
+	private AccumulatedTime calculateSum(Entry.Property prop, String value){
+			Duration sum = dbHandler.getEntriesBy(prop, value)
 			.stream().map(em -> modelToEntry(em).getDuration())
 			.reduce(Duration.ZERO, (acc, current) -> acc = acc.plus(current));
 
-		return new AccumulatedTime(Entry.Property.PROJECT.toString(), project, sum);
+			return new AccumulatedTime(prop.toString(), value, sum);
 	}
 
 	public EntryModel entryToModel(Entry e){
