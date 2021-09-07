@@ -54,6 +54,10 @@ public class Joggl {
 		return stoppedEntryModel;
 	}
 
+	public void resetTimer(){
+		timer.reset();
+	}
+
 	public TimerStatus getStatus() throws Timer.NoActiveTimerException{
 		log.info("Incoming status request");
 
