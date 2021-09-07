@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +35,8 @@ public class DatabaseHandlerTest {
 
 	@BeforeEach
 	public void init(){
+		dbHandler.repo.deleteAll();
+
 		String client = "The Client";
 		String name = "A name";
 		String project = "Development";
@@ -61,11 +62,6 @@ public class DatabaseHandlerTest {
 		anEntryWithDifferentName = new Entry(name2, client2, project2, description2);
 		anEntryWithDifferentName.update(Entry.Property.STARTTIME, LocalDateTime.now());
 		anEntryWithDifferentName.update(Entry.Property.ENDTIME, LocalDateTime.now());
-	}
-
-	@AfterEach
-	public void dropEntries(){
-		dbHandler.repo.deleteAll();
 	}
 
 	@Test
@@ -98,7 +94,9 @@ public class DatabaseHandlerTest {
 
 			assertTrue(anEntry.getName().equals(fromDatabaseWithName.get(0).getName()));
 			assertTrue(anEntry.getClient().equals(fromDatabaseWithName.get(0).getClient()));
-			assertTrue(anEntry.getProject().equals(fromDatabaseWithName.get(0).getProject())); assertTrue(anEntry.getDescription().equals(fromDatabaseWithName.get(0).getDescription())); assertTrue(anEntry.getStartTimeAsString().equals(fromDatabaseWithName.get(0).getStartTimeAsString()));
+			assertTrue(anEntry.getProject().equals(fromDatabaseWithName.get(0).getProject()));
+ 		   	assertTrue(anEntry.getDescription().equals(fromDatabaseWithName.get(0).getDescription()));
+ 		   	assertTrue(anEntry.getStartTimeAsString().equals(fromDatabaseWithName.get(0).getStartTimeAsString()));
 			assertTrue(anEntry.getEndTimeAsString().equals(fromDatabaseWithName.get(0).getEndTimeAsString()));
 
 			List<Entry> fromDatabaseWithDifferentName = dbHandler.getEntriesBy(Entry.Property.NAME, anEntryWithDifferentName.getName()).
