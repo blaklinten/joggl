@@ -50,6 +50,10 @@ public class Timer {
 		}
 	}
 
+	public void reset(){
+		entry = null;
+	}
+
 	public TimerStatus getCurrentStatus() throws NoActiveTimerException {
 		if (isRunning()) {
 			return new TimerStatus(entry);
