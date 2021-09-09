@@ -6,6 +6,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
+/**
+ * This is a simple CLI that can be used instead of the WebController.
+ * */
 public class JogglCLI {
 	/*
 	private static Boolean exiting = false;
