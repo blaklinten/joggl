@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import xyz.blaklinten.joggl.Entry;
-import xyz.blaklinten.joggl.Models.EntryModel;
+import xyz.blaklinten.joggl.Models.EntryDTO;
+import xyz.blaklinten.joggl.Models.NewEntry;
 
 /**
  * DatabaseHandler
@@ -33,10 +33,10 @@ public class DatabaseHandler {
  	 * @param entryToSave The entry that is to be saved.
  	 * @return The unique ID given to the saved entry.
  	 * */
-	public long save(EntryModel entryToSave){
+	public long save(EntryDTO entryToSave){
 		log.info("Saving entry " + entryToSave.getName() + " to database");
 
-		EntryModel savedEntry = repo.save(entryToSave);
+		EntryDTO savedEntry = repo.save(entryToSave);
 
 		log.info("Got ID " + savedEntry.getId() + " from database");
 		return savedEntry.getId();
@@ -49,10 +49,10 @@ public class DatabaseHandler {
  	 * @return If found, this is the entry with the given ID.
  	 * @throws NoSuchElementException If no entry with the specified ID is found.
  	 * */
-	public EntryModel getEntryByID(long id) throws NoSuchElementException {
+	public EntryDTO getEntryByID(long id) throws NoSuchElementException {
 		log.info("Searching for entry with ID " + id);
 
-		Optional<EntryModel> result = repo.findById(id);
+		Optional<EntryDTO> result = repo.findById(id);
 		
 		if (result.isEmpty()){
 			String errorMessage = "No entry with ID " + id + " exists.";
@@ -74,8 +74,8 @@ public class DatabaseHandler {
  	 * @return A ist of entries representing the result of the database query. 
  	 * @throws NoSuchElementException If the resulting list of entries is empty, i.e. no entries matched the query.
  	 * */
-	public List<EntryModel> getEntriesBy(Entry.Property prop, String value) throws NoSuchElementException {
-	List<EntryModel> result;
+	public List<EntryDTO> getEntriesBy(NewEntry.Property prop, String value) throws NoSuchElementException {
+	List<EntryDTO> result;
 
 		switch(prop){
 			case NAME:

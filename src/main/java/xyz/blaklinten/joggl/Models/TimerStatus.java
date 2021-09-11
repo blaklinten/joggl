@@ -1,7 +1,5 @@
 package xyz.blaklinten.joggl.Models;
 
-import xyz.blaklinten.joggl.Entry;
-
 /**
  * This class is used to represent the status of a running timer.
  * From this, a user can get all the necessary information about
@@ -23,7 +21,7 @@ public class TimerStatus{
  	 * the current duration in a more presentable way.
  	 * @param currentEntry The entry that will serve as a base for the status.
  	 * */
-	public TimerStatus(Entry currentEntry){
+	public TimerStatus(RunningEntry currentEntry){
 		this.id = currentEntry.getID();
 		this.name = currentEntry.getName();
 		this.client = currentEntry.getClient();

@@ -10,13 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * This class represents a model of an Entry, as seen from te perspective of a user and a database.
+ * This class is a Data Transfer Object for an Entry.
  * It is {@link Serializable} and can therefore be used as a template for the Repository
  * as well as the WebController.
  * */
 @Entity
 @Table(name = "entries")
-public class EntryModel implements Serializable {
+public class EntryDTO implements Serializable {
 
 	/**
  	 * This method returns the unique ID of this entry.
@@ -121,7 +121,7 @@ public class EntryModel implements Serializable {
 	/**
  	 * This is an empty constructor.
  	 * */
-	protected EntryModel(){
+	protected EntryDTO(){
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class EntryModel implements Serializable {
  	 * @param startTime The name of the entry, can be null.
  	 * @param endTime The name of the entry, can be null.
  	 * */
-	public EntryModel(
+	public EntryDTO(
 			String name,
  		   	String client,
 			String project,

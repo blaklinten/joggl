@@ -1,15 +1,14 @@
-package xyz.blaklinten.joggl;
-
-import java.time.LocalDateTime;
+package xyz.blaklinten.joggl.Models;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import xyz.blaklinten.joggl.Models.TimerStatus;
+import xyz.blaklinten.joggl.EntryMapper;
 
 /**
- * This is a class the encapsulate all
+ * This is a class that encapsulates all
  * the necessary functionality to act as a Timer.
  * */
 @Component
@@ -17,7 +16,8 @@ public class Timer {
 
 	private Logger log = LoggerFactory.getLogger(Timer.class);
 
-	private Entry entry = null;
+	@Autowired
+	private RunningEntry runningEntry = null;
 
 	/**
  	 * A method that starts the timer, i.e. creates a new entry and records the start time.
@@ -25,12 +25,13 @@ public class Timer {
  	 * @throws TimerAlreadyRunningException When a user tries to start an entry
  	 * and another one is already running.
  	 * */
-	public void start(Entry newEntry) throws TimerAlreadyRunningException{
+	public RunningEntry start(NewEntry newEntry) throws TimerAlreadyRunningException{
 		if (isNotRunning()) {
-			entry = newEntry;
+			
+			runningEntry = EntryMapper.start(newEntry);
 
-			entry.update(Entry.Property.STARTTIME, LocalDateTime.now());
 			log.info("Starting new entry");
+			return runningEntry;
 		}
 		else {
 			String errorMessage = "A timer is already running!";
@@ -41,19 +42,16 @@ public class Timer {
 	}
 
 	/**
- 	 * This method stop the currently running timer, if any.
+ 	 * This method stops the currently running timer, if any.
  	 * This means it records the stop time (now), resets the timer and returns the stopped entry.
  	 * @return The previously running, now stopped, entry.
  	 * @throws NoActiveTimerException When there are no active entry, i.e. the timer is not running.
  	 * */
-	public Entry stop() throws NoActiveTimerException {
+	public StoppedEntry stop() throws NoActiveTimerException {
 
 		if (isRunning()){
-			entry.update(Entry.Property.ENDTIME, LocalDateTime.now());
-
-			Entry stoppedEntry = entry;
-
-			reset();
+			StoppedEntry stoppedEntry = EntryMapper.stop(runningEntry);
+			resetTimer();
 
 			log.info("Stopping entry " + stoppedEntry.getName());
 			return stoppedEntry;
@@ -68,10 +66,10 @@ public class Timer {
 
 	/**
  	 * This method resets the current Timer instance
- 	 * by making sure that its entry is null.
+ 	 * by making sure that its runningEntry is null.
  	 * */
-	protected void reset(){
-		entry = null;
+	public void resetTimer(){
+		runningEntry = null;
 	}
 
 	/**
@@ -82,7 +80,7 @@ public class Timer {
  	 * */
 	public TimerStatus getCurrentStatus() throws NoActiveTimerException {
 		if (isRunning()) {
-			return new TimerStatus(entry);
+			return new TimerStatus(runningEntry);
 		}
 		else {
 			String errorMessage = "No Timer running...";
@@ -97,8 +95,8 @@ public class Timer {
  	 * entry-object to whether the timer is running or not.
  	 * @return True if the timer is running, False otherwise.
  	 * */
-	public Boolean isRunning(){
-		return (entry != null) ? true : false;
+	protected Boolean isRunning(){
+		return (runningEntry != null) ? true : false;
 	}
 
 	/**
@@ -106,8 +104,8 @@ public class Timer {
  	 * entry-object to whether the timer is running or not.
  	 * @return True if the timer is not running, False otherwise.
  	 * */
-	public Boolean isNotRunning(){
-		return (entry == null) ? true : false;
+	private Boolean isNotRunning(){
+		return (runningEntry == null) ? true : false;
 	}
 
 	/**

@@ -9,8 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import xyz.blaklinten.joggl.Database.DatabaseHandler;
-import xyz.blaklinten.joggl.Models.EntryModel;
 import xyz.blaklinten.joggl.Models.AccumulatedTime;
+import xyz.blaklinten.joggl.Models.EntryDTO;
+import xyz.blaklinten.joggl.Models.NewEntry;
+import xyz.blaklinten.joggl.Models.RunningEntry;
+import xyz.blaklinten.joggl.Models.StoppedEntry;
+import xyz.blaklinten.joggl.Models.Timer;
 import xyz.blaklinten.joggl.Models.TimerStatus;
 
 /**
@@ -34,20 +38,14 @@ public class Joggl {
  	 * @return A representation of the started entry.
  	 * @throws Timer.TimerAlreadyRunningException If a timer was already running and thus preventing a new one to be started.
  	 * */
-	public EntryModel startTimer(EntryModel entry) throws Timer.TimerAlreadyRunningException {
+	public RunningEntry startTimer(NewEntry newEntry) throws Timer.TimerAlreadyRunningException {
 		log.info("Incoming start request");
 
-		Entry newEntry = new Entry(
-				entry.getName(),
-				entry.getClient(),
-				entry.getProject(),
-				entry.getDescription());
+		RunningEntry running = timer.start(newEntry);
 
-		timer.start(newEntry);
+		log.info("Started entry " + running.getName());
 
-		log.info("Started entry " + newEntry.getName());
-
-		return entryToModel(newEntry);
+		return running;
 	}
 
 	/**
@@ -55,26 +53,24 @@ public class Joggl {
  	 * @return The recently stopped and saved entry.
  	 * @throws Timer.NoActiveTimerException If there were no running timer.
  	 * */
-	public EntryModel stopTimer() throws Timer.NoActiveTimerException {
+	public StoppedEntry stopTimer() throws Timer.NoActiveTimerException {
 		log.info("Incoming stop request");
 
-		Entry stoppedEntry;
-		EntryModel stoppedEntryModel;
+		StoppedEntry stopped = timer.stop();
 
-		stoppedEntry = timer.stop();
-		stoppedEntryModel = entryToModel(stoppedEntry);
-		dbHandler.save(stoppedEntryModel);
+		EntryDTO entryToSave = EntryMapper.prepareToSave(stopped);
+		dbHandler.save(entryToSave);
 
-		log.info("Stopped entry " + stoppedEntry.getName());
+		log.info("Stopped entry " + stopped.getName());
 
-		return stoppedEntryModel;
+		return stopped;
 	}
 
 	/**
  	 * This method is mostly used by Tests to reset the timer in between runs.
  	 * */
 	public void resetTimer(){
-		timer.reset();
+		timer.resetTimer();
 	}
 
 	/**
@@ -86,7 +82,9 @@ public class Joggl {
 	public TimerStatus getStatus() throws Timer.NoActiveTimerException{
 		log.info("Incoming status request");
 
-		return timer.getCurrentStatus();
+		TimerStatus status = timer.getCurrentStatus();
+
+		return status;
 	}
 
 	/**
@@ -100,7 +98,7 @@ public class Joggl {
 	public AccumulatedTime sumEntriesbyName(String name) throws NoSuchElementException{
 		log.info("Incoming sum-by-name request");
 
-		return calculateSum(Entry.Property.NAME, name);
+		return calculateSum(NewEntry.Property.NAME, name);
 
 	}
 
@@ -115,7 +113,7 @@ public class Joggl {
 	public AccumulatedTime sumEntriesbyClient(String client) throws NoSuchElementException {
 		log.info("Incoming sum-by-client request");
 
-		return calculateSum(Entry.Property.CLIENT, client);
+		return calculateSum(NewEntry.Property.CLIENT, client);
 
 	}
 	
@@ -131,7 +129,7 @@ public class Joggl {
 	public AccumulatedTime sumEntriesbyProject(String project) throws NoSuchElementException {
 		log.info("Incoming sum-by-project request");
 
-		return calculateSum(Entry.Property.PROJECT, project);
+		return calculateSum(NewEntry.Property.PROJECT, project);
 	}
 
 	/**
@@ -142,45 +140,11 @@ public class Joggl {
  	 * @param value The value of the property to use as key when searching the database.
  	 * @return The resulting duration of all the entries with matching prop values.
  	 * */
-	private AccumulatedTime calculateSum(Entry.Property prop, String value){
+	private AccumulatedTime calculateSum(NewEntry.Property prop, String value){
 			Duration sum = dbHandler.getEntriesBy(prop, value)
-			.stream().map(em -> modelToEntry(em).getDuration())
+			.stream().map(dto -> EntryMapper.entryFromDTO(dto).getDuration())
 			.reduce(Duration.ZERO, (acc, current) -> acc = acc.plus(current));
 
 			return new AccumulatedTime(prop.toString(), value, sum);
-	}
-
-	/**
- 	 * This method is used to convert an entry into something 
- 	 * more convenient for serialization (i.e. database and JSON usage); an entryModel.
- 	 * @param entry The entry to convert
- 	 * @return The entryModel representation of the entry.
- 	 * */
-	public EntryModel entryToModel(Entry entry){
-
-		return new EntryModel(
-				entry.getName(),
-				entry.getClient(),
-				entry.getProject(),
-				entry.getDescription(),
-				entry.getStartTimeAsString(),
-				entry.getEndTimeAsString());
-	}
-
-	/**
- 	 * This method is used to convert an entryToModel into something 
- 	 * more convenient for internal use, i.e. an Entry.
- 	 * @param entryModel The entryModel to convert
- 	 * @return The Entry representation of the entryModel.
- 	 * */
-	public Entry modelToEntry (EntryModel entryModel){
-		return new Entry(
-				entryModel.getId(),
-				entryModel.getName(),
-				entryModel.getClient(),
-				entryModel.getProject(),
-				entryModel.getDescription(),
-				entryModel.getStartTime(),
-				entryModel.getEndTime());
 	}
 }

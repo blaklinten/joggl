@@ -5,14 +5,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import xyz.blaklinten.joggl.Entry;
+import xyz.blaklinten.joggl.EntryMapper;
+
 
 /**
  * Unit test for an Entry
@@ -25,7 +26,7 @@ public class EntryTest
 	String project = "Development";
 	String description = "A bunch of tests";
 
-	Entry anEntry = new Entry(name, client, project, description);
+	NewEntry anEntry = new NewEntry(name, client, project, description);
 
 	/* For testing with multiple entries */ 
 	long id1 = 1, id2 = 2;
@@ -36,109 +37,128 @@ public class EntryTest
 
 	LocalDateTime startTime1 = LocalDateTime.of(2021,9,1,12,30,00);
 	LocalDateTime endTime1 = startTime1.plusMinutes(30);
-	
-	String startTimeString1 = startTime1
-		.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-	
-	String endTimeString1 = endTime1
-		.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
 	LocalDateTime startTime2 = LocalDateTime.of(2021,11,1,12,30,00);
 	LocalDateTime endTime2 = startTime2.plusHours(2);
 
-	String startTimeString2 = startTime2
-		.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-	
-	String endTimeString2 = endTime2
-		.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+	StoppedEntry entry1 = EntryMapper.stop(
+			EntryMapper.start(
+				new NewEntry(
+					name1,
+ 				   	client1,
+ 				   	project1,
+					description1)
+				)
+			);
 
-	Entry entry1 = new Entry(id1, name1, client1, project1,
-				description1, startTimeString1, endTimeString1);
-	Entry entry2 = new Entry(id2, name2, client2, project2,
-				description2, startTimeString2, endTimeString2);
+
+	StoppedEntry entry2 = EntryMapper.stop(
+			EntryMapper.start(
+				new NewEntry(
+					name2,
+ 				   	client2,
+ 				   	project2,
+					description2)
+				)
+			);
+
+	@BeforeEach
+	public void init(){
+		entry1.updateStartTime(startTime1);
+		entry1.updateEndTime(endTime1);
+		entry2.updateStartTime(startTime2);
+		entry2.updateEndTime(endTime2);
+	}
 
 	/* Single entry tests */
 	@Test
 	public void startEntryTest() {
-		assertTrue(anEntry.getStartTime() == null);
-		anEntry.update(Entry.Property.STARTTIME, LocalDateTime.now());
+		RunningEntry running = EntryMapper.start(anEntry);
 
-		assertTrue(anEntry.getClient() == client);
-		assertTrue(anEntry.getDescription() == description);
-		assertTrue(anEntry.getProject() == project);
-		assertTrue(anEntry.getName() == name);
-		assertTrue(anEntry.getStartTime() != null);
-		assertTrue(LocalDateTime.now().isAfter(anEntry.getStartTime()));
-		assertTrue(anEntry.getEndTime() == null);
+		assertTrue(running.getClient() == client);
+		assertTrue(running.getDescription() == description);
+		assertTrue(running.getProject() == project);
+		assertTrue(running.getName() == name);
+		assertTrue(running.getStartTime() != null);
+		assertTrue(LocalDateTime.now().isAfter(running.getStartTime()));
 	}
 
 	@Test
 	public void CalculateDurationOfRunningEntryTest(){
-		anEntry.update(Entry.Property.STARTTIME, LocalDateTime.now());
-		assertTrue(anEntry.getEndTime() == null);
-		assertFalse(anEntry.getDuration().isZero());
+		RunningEntry running = EntryMapper.start(anEntry);
+
+		assertFalse(running.getDuration().isZero());
 	}
 
 	@Test
 	public void endEntryTest() {
 		final CountDownLatch waiter = new CountDownLatch(1);
 
-		anEntry.update(Entry.Property.STARTTIME, LocalDateTime.now());
+		RunningEntry running = EntryMapper.start(anEntry);
+
 		try{
 		waiter.await(1000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			System.err.println(e.getMessage());
 		}
-		anEntry.update(Entry.Property.ENDTIME, LocalDateTime.now());
+		 StoppedEntry stopped = EntryMapper.stop(running);
 
-		assertTrue(anEntry.getClient() == client);
-		assertTrue(anEntry.getDescription() == description);
-		assertTrue(anEntry.getProject() == project);
-		assertTrue(anEntry.getName() == name);
-		assertTrue(anEntry.getStartTime() != null);
-		assertTrue(LocalDateTime.now().isAfter(anEntry.getStartTime()));
-		assertTrue(anEntry.getEndTime() != null);
-		assertTrue(anEntry.getEndTime().isAfter(anEntry.getStartTime()));
-		assertTrue(anEntry.getEndTime().isBefore(LocalDateTime.now()));
+		assertTrue(stopped.getClient() == client);
+		assertTrue(stopped.getDescription() == description);
+		assertTrue(stopped.getProject() == project);
+		assertTrue(stopped.getName() == name);
+		assertTrue(stopped.getStartTime() != null);
+		assertTrue(LocalDateTime.now().isAfter(stopped.getStartTime()));
+		assertTrue(stopped.getEndTime() != null);
+		assertTrue(stopped.getEndTime().isAfter(stopped.getStartTime()));
+		assertTrue(stopped.getEndTime().isBefore(LocalDateTime.now()));
 	}
 
 	@Test
 	public void updateEntryTest() {
+		final CountDownLatch waiter = new CountDownLatch(1);
+
+		RunningEntry running = EntryMapper.start(anEntry);
+
+		try{
+		waiter.await(1000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			System.err.println(e.getMessage());
+		}
+
+		StoppedEntry stopped = EntryMapper.stop(running);
+
 		String newClient = "Another Client";
 		String newName = "Updating test";
 		String newProject = "Development 2.0";
 		String newDescription = "Updating the entry";
-		LocalDateTime oldStartTime = anEntry.getStartTime();
+
+		LocalDateTime oldStartTime = stopped.getStartTime();
 		LocalDateTime newStartTime = LocalDateTime.now();
-		LocalDateTime oldEndTime = anEntry.getEndTime();
+		LocalDateTime oldEndTime = stopped.getEndTime();
 		LocalDateTime newEndTime = LocalDateTime.now();
 
-		anEntry.update(Entry.Property.CLIENT, newClient);
-		assertTrue(anEntry.getClient() == newClient);
-		assertTrue(anEntry.getClient() != client);
+		stopped.update(StoppedEntry.Property.NAME, newName);
+		stopped.update(StoppedEntry.Property.CLIENT, newClient);
+		stopped.update(StoppedEntry.Property.DESCRIPTION, newDescription);
+		stopped.update(StoppedEntry.Property.PROJECT, newProject);
+		stopped.updateStartTime(newStartTime);
+		stopped.updateEndTime(newEndTime);
 
-		anEntry.update(Entry.Property.DESCRIPTION, newDescription);
-		assertTrue(anEntry.getDescription() == newDescription);
-		assertTrue(anEntry.getDescription() != description);
-
-		anEntry.update(Entry.Property.PROJECT, newProject);
-		assertTrue(anEntry.getProject() == newProject);
-		assertTrue(anEntry.getProject() != project);
-
-
-		anEntry.update(Entry.Property.NAME, newName);
-		assertTrue(anEntry.getName() == newName);
-		assertTrue(anEntry.getName() != name);
-		anEntry.update(Entry.Property.STARTTIME, newStartTime);
-		assertTrue(anEntry.getStartTime() == newStartTime);
-		assertTrue(anEntry.getStartTime() != oldStartTime);
-
-		anEntry.update(Entry.Property.ENDTIME, newEndTime);
-		assertTrue(anEntry.getEndTime() == newEndTime);
-		assertTrue(anEntry.getEndTime() != oldEndTime);
+		assertTrue(stopped.getName() == newName);
+		assertTrue(stopped.getName() != name);
+		assertTrue(stopped.getClient() == newClient);
+		assertTrue(stopped.getClient() != client);
+		assertTrue(stopped.getDescription() == newDescription);
+		assertTrue(stopped.getDescription() != description);
+		assertTrue(stopped.getProject() == newProject);
+		assertTrue(stopped.getProject() != project);
+		assertTrue(stopped.getStartTime() == newStartTime);
+		assertTrue(stopped.getStartTime() != oldStartTime);
+		assertTrue(stopped.getEndTime() == newEndTime);
+		assertTrue(stopped.getEndTime() != oldEndTime);
 	}
 
-	/* Multiple entries test */
 	@Test
 	public void calculateDurationTest(){
 
@@ -146,13 +166,19 @@ public class EntryTest
 				.equals(Duration.ofMinutes(30)));
 	}
 
+	/* Multiple entries test */
+
 	@Test
 	public void sumEntriesTest(){
-		ArrayList<Entry> list = new ArrayList<Entry>();
+		ArrayList<StoppedEntry> list = new ArrayList<StoppedEntry>();
 		list.add(entry1);
 		list.add(entry2);
 
-		Duration sum = Entry.sum(list);
+		Duration sum = list.stream()
+			.map(e -> e.getDuration())
+			.reduce(Duration.ZERO, (acc, current) ->
+					acc = acc.plus(current));
+
 		Duration expected = Duration.ofMinutes(30).plus(Duration.ofHours(2));
 
 		assertTrue(sum.equals(expected));
