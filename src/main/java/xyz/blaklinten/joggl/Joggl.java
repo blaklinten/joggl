@@ -9,8 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import xyz.blaklinten.joggl.Database.DatabaseHandler;
-import xyz.blaklinten.joggl.Models.EntryModel;
+import xyz.blaklinten.joggl.Database.EntryDTO;
 import xyz.blaklinten.joggl.Models.AccumulatedTime;
+import xyz.blaklinten.joggl.Models.Entry;
 import xyz.blaklinten.joggl.Models.TimerStatus;
 
 /**
@@ -34,7 +35,7 @@ public class Joggl {
  	 * @return A representation of the started entry.
  	 * @throws Timer.TimerAlreadyRunningException If a timer was already running and thus preventing a new one to be started.
  	 * */
-	public EntryModel startTimer(EntryModel entry) throws Timer.TimerAlreadyRunningException {
+	public EntryDTO startTimer(EntryDTO entry) throws Timer.TimerAlreadyRunningException {
 		log.info("Incoming start request");
 
 		Entry newEntry = new Entry(
@@ -55,19 +56,19 @@ public class Joggl {
  	 * @return The recently stopped and saved entry.
  	 * @throws Timer.NoActiveTimerException If there were no running timer.
  	 * */
-	public EntryModel stopTimer() throws Timer.NoActiveTimerException {
+	public EntryDTO stopTimer() throws Timer.NoActiveTimerException {
 		log.info("Incoming stop request");
 
 		Entry stoppedEntry;
-		EntryModel stoppedEntryModel;
+		EntryDTO stoppedEntryDTO;
 
 		stoppedEntry = timer.stop();
-		stoppedEntryModel = entryToModel(stoppedEntry);
-		dbHandler.save(stoppedEntryModel);
+		stoppedEntryDTO = entryToModel(stoppedEntry);
+		dbHandler.save(stoppedEntryDTO);
 
 		log.info("Stopped entry " + stoppedEntry.getName());
 
-		return stoppedEntryModel;
+		return stoppedEntryDTO;
 	}
 
 	/**
@@ -152,13 +153,13 @@ public class Joggl {
 
 	/**
  	 * This method is used to convert an entry into something 
- 	 * more convenient for serialization (i.e. database and JSON usage); an entryModel.
+ 	 * more convenient for serialization (i.e. database and JSON usage); an entryDTO.
  	 * @param entry The entry to convert
- 	 * @return The entryModel representation of the entry.
+ 	 * @return The entryDTO representation of the entry.
  	 * */
-	public EntryModel entryToModel(Entry entry){
+	public EntryDTO entryToModel(Entry entry){
 
-		return new EntryModel(
+		return new EntryDTO(
 				entry.getName(),
 				entry.getClient(),
 				entry.getProject(),
@@ -170,17 +171,17 @@ public class Joggl {
 	/**
  	 * This method is used to convert an entryToModel into something 
  	 * more convenient for internal use, i.e. an Entry.
- 	 * @param entryModel The entryModel to convert
- 	 * @return The Entry representation of the entryModel.
+ 	 * @param entryDTO The entryDTO to convert
+ 	 * @return The Entry representation of the entryDTO.
  	 * */
-	public Entry modelToEntry (EntryModel entryModel){
+	public Entry modelToEntry (EntryDTO entryDTO){
 		return new Entry(
-				entryModel.getId(),
-				entryModel.getName(),
-				entryModel.getClient(),
-				entryModel.getProject(),
-				entryModel.getDescription(),
-				entryModel.getStartTime(),
-				entryModel.getEndTime());
+				entryDTO.getId(),
+				entryDTO.getName(),
+				entryDTO.getClient(),
+				entryDTO.getProject(),
+				entryDTO.getDescription(),
+				entryDTO.getStartTime(),
+				entryDTO.getEndTime());
 	}
 }

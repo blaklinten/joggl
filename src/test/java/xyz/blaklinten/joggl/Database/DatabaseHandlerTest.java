@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import xyz.blaklinten.joggl.Joggl;
-import xyz.blaklinten.joggl.Entry;
+import xyz.blaklinten.joggl.Models.Entry;
 
 /**
  * Unit test for the Databasehandler component.

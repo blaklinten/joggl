@@ -45,7 +45,7 @@ public class Importer {
 /**
  * This class is used to list all files in the file system.
  * By listing all files (and folders) the program can gather the necessary information
- * to create EntryModel entries to save to the database.
+ * to create EntryDTO entries to save to the database.
  * */
 class ListFiles extends SimpleFileVisitor<Path> {
 	private final int indentionAmount = 3;
@@ -60,7 +60,7 @@ class ListFiles extends SimpleFileVisitor<Path> {
 
 	/**
  	 * An enum that is used to keep track on what
- 	 * EntryModel-property the current directory represent.
+ 	 * EntryDTO-property the current directory represent.
  	 * */
 	private enum DirectoryLevel {
 		Base,

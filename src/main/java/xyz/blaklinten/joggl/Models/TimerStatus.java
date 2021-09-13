@@ -1,7 +1,5 @@
 package xyz.blaklinten.joggl.Models;
 
-import xyz.blaklinten.joggl.Entry;
-
 /**
  * This class is used to represent the status of a running timer.
  * From this, a user can get all the necessary information about
