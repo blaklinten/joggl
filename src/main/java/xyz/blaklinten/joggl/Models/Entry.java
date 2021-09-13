@@ -1,4 +1,4 @@
-package xyz.blaklinten.joggl;
+package xyz.blaklinten.joggl.Models;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -103,7 +103,7 @@ public class Entry {
  	 * This method allows a user to create a Entry when the ID is known
  	 * and all information are avaliable as Strings (exckluding the ID).
  	 * This is very handy when creating Entries after a succesful query to the database,
- 	 * as the database returns objects of type EntryModel.
+ 	 * as the database returns objects of type EntryDTO.
  	 * @param id The ID of the entry.
  	 * @param name The name of the entry.
  	 * @param client The client of the entry.

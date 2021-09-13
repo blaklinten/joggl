@@ -1,4 +1,4 @@
-package xyz.blaklinten.joggl.Models;
+package xyz.blaklinten.joggl.Database;
 
 import java.io.Serializable;
 
@@ -16,7 +16,7 @@ import javax.persistence.Table;
  * */
 @Entity
 @Table(name = "entries")
-public class EntryModel implements Serializable {
+public class EntryDTO implements Serializable {
 
 	/**
  	 * This method returns the unique ID of this entry.
@@ -121,11 +121,11 @@ public class EntryModel implements Serializable {
 	/**
  	 * This is an empty constructor.
  	 * */
-	protected EntryModel(){
+	protected EntryDTO(){
 	}
 
 	/**
- 	 * This constructor creates an EntryModel based on the necessary information.
+ 	 * This constructor creates an EntryDTO based on the necessary information.
  	 * @param name The name of the entry, can be null.
  	 * @param client The name of the entry, can be null.
  	 * @param project The name of the entry, can be null.
@@ -133,7 +133,7 @@ public class EntryModel implements Serializable {
  	 * @param startTime The name of the entry, can be null.
  	 * @param endTime The name of the entry, can be null.
  	 * */
-	public EntryModel(
+	public EntryDTO(
 			String name,
  		   	String client,
 			String project,

@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import xyz.blaklinten.joggl.Models.EntryModel;
+import xyz.blaklinten.joggl.Database.EntryDTO;
 import xyz.blaklinten.joggl.Models.TimerStatus;
 
 @SpringBootTest
@@ -22,7 +22,7 @@ public class JogglTest {
 	@Autowired
 	private Joggl joggl;
 
-	private EntryModel testEntry;
+	private EntryDTO testEntry;
 
 	@BeforeEach
 	public void initEntry(){
@@ -33,7 +33,7 @@ public class JogglTest {
 		String startTime = null;
 		String endTime = null;
 
-		testEntry = new EntryModel(
+		testEntry = new EntryDTO(
 				name,
 				client,
 				project,
@@ -51,7 +51,7 @@ public class JogglTest {
 	@Test
 	public void startTimerTest(){
 		try {
-			EntryModel startedEntry = joggl.startTimer(testEntry);
+			EntryDTO startedEntry = joggl.startTimer(testEntry);
 			
 			assertThat(startedEntry.getName()).isEqualTo(testEntry.getName());
 			assertThat(startedEntry.getClient()).isEqualTo(testEntry.getClient());
@@ -75,7 +75,7 @@ public class JogglTest {
 
 			joggl.startTimer(testEntry);
 
-			EntryModel stoppedEntry = joggl.stopTimer();
+			EntryDTO stoppedEntry = joggl.stopTimer();
 			assertThat(stoppedEntry.getName()).isEqualTo(testEntry.getName());
 			assertThat(stoppedEntry.getClient()).isEqualTo(testEntry.getClient());
 			assertThat(stoppedEntry.getProject()).isEqualTo(testEntry.getProject());

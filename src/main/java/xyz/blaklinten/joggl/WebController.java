@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import xyz.blaklinten.joggl.Database.EntryDTO;
 import xyz.blaklinten.joggl.Models.AccumulatedTime;
-import xyz.blaklinten.joggl.Models.EntryModel;
 import xyz.blaklinten.joggl.Models.TimerStatus;
 
 /**
@@ -39,9 +39,9 @@ public class WebController{
  	 * @throws ResponseStatusException If there already was a timer running.
  	 * */
 	@PostMapping("/start-timer")
-	public ResponseEntity<EntryModel> startTimer(@RequestBody EntryModel entry){
+	public ResponseEntity<EntryDTO> startTimer(@RequestBody EntryDTO entry){
 		try{
-			return new ResponseEntity<EntryModel>(joggl.startTimer(entry), HttpStatus.OK);
+			return new ResponseEntity<EntryDTO>(joggl.startTimer(entry), HttpStatus.OK);
 		}
 		catch (Timer.TimerAlreadyRunningException e){
 			// TODO Is this a "good" exception to throw? Is there a better way to react when an error occurs?
@@ -59,9 +59,9 @@ public class WebController{
  	 * @throws ResponseStatusException If there were no timer running.
  	 * */
 	@GetMapping("/stop-timer")
-	public ResponseEntity<EntryModel> stopTimer(){
+	public ResponseEntity<EntryDTO> stopTimer(){
 		try {
-			return new ResponseEntity<EntryModel>(joggl.stopTimer(), HttpStatus.OK);
+			return new ResponseEntity<EntryDTO>(joggl.stopTimer(), HttpStatus.OK);
 		}
 		catch (Timer.NoActiveTimerException e) {
 			// TODO Is this a "good" exception to throw? Is there a better way to react when an error occurs?

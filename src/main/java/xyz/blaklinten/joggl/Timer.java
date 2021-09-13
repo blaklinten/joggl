@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import xyz.blaklinten.joggl.Models.TimerStatus;
+import xyz.blaklinten.joggl.Models.Entry;
 
 /**
  * This is a class the encapsulate all
