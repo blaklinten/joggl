@@ -17,129 +17,158 @@ import org.springframework.boot.test.context.SpringBootTest;
 import xyz.blaklinten.joggl.Joggl;
 import xyz.blaklinten.joggl.Models.Entry;
 
-/**
- * Unit test for the Databasehandler component.
- */
+/** Unit test for the Databasehandler component. */
 @SpringBootTest
 public class DatabaseHandlerTest {
 
-	@Autowired
-	private DatabaseHandler dbHandler;
+  @Autowired private DatabaseHandler dbHandler;
 
-	@Autowired
-	private Joggl joggl;
+  @Autowired private Joggl joggl;
 
-	private Entry anEntry;
-	private Entry anEntryWithSameName;
-	private Entry anEntryWithDifferentName;
+  private Entry anEntry;
+  private Entry anEntryWithSameName;
+  private Entry anEntryWithDifferentName;
 
-	@BeforeEach
-	public void init(){
-		dbHandler.repo.deleteAll();
+  @BeforeEach
+  public void init() {
+    dbHandler.repo.deleteAll();
 
-		String client = "The Client";
-		String name = "A name";
-		String project = "Development";
-		String description = "A bunch of tests";
+    String client = "The Client";
+    String name = "A name";
+    String project = "Development";
+    String description = "A bunch of tests";
 
-		anEntry = new Entry(name, client, project, description);
-		anEntry.update(Entry.Property.STARTTIME, LocalDateTime.now());
-		anEntry.update(Entry.Property.ENDTIME, LocalDateTime.now());
+    anEntry = new Entry(name, client, project, description);
+    anEntry.update(Entry.Property.STARTTIME, LocalDateTime.now());
+    anEntry.update(Entry.Property.ENDTIME, LocalDateTime.now());
 
-		String client1 = "The Client";
-		String name1 = "A name";
-		String project1 = "Development";
-		String description1 = "This entry has the same name as anEntry";
+    String client1 = "The Client";
+    String name1 = "A name";
+    String project1 = "Development";
+    String description1 = "This entry has the same name as anEntry";
 
-		anEntryWithSameName = new Entry(name1, client1, project1, description1);
-		anEntryWithSameName.update(Entry.Property.STARTTIME, LocalDateTime.now());
-		anEntryWithSameName.update(Entry.Property.ENDTIME, LocalDateTime.now());
-		String client2 = "The Client";
-		String name2 = "Another name";
-		String project2 = "Development";
-		String description2 = "This entry has a different name";
+    anEntryWithSameName = new Entry(name1, client1, project1, description1);
+    anEntryWithSameName.update(Entry.Property.STARTTIME, LocalDateTime.now());
+    anEntryWithSameName.update(Entry.Property.ENDTIME, LocalDateTime.now());
+    String client2 = "The Client";
+    String name2 = "Another name";
+    String project2 = "Development";
+    String description2 = "This entry has a different name";
 
-		anEntryWithDifferentName = new Entry(name2, client2, project2, description2);
-		anEntryWithDifferentName.update(Entry.Property.STARTTIME, LocalDateTime.now());
-		anEntryWithDifferentName.update(Entry.Property.ENDTIME, LocalDateTime.now());
-	}
+    anEntryWithDifferentName = new Entry(name2, client2, project2, description2);
+    anEntryWithDifferentName.update(Entry.Property.STARTTIME, LocalDateTime.now());
+    anEntryWithDifferentName.update(Entry.Property.ENDTIME, LocalDateTime.now());
+  }
 
-	@Test
-	public void saveOneEntryToAndGetByIDFromDatabaseTest(){
-		long id = dbHandler.save(joggl.entryToModel(anEntry));
+  @Test
+  public void saveOneEntryToAndGetByIDFromDatabaseTest() {
+    long id = dbHandler.save(joggl.entryToModel(anEntry));
 
-		try{
-			Entry fromDatabase = joggl.modelToEntry(dbHandler.getEntryByID(id));
+    try {
+      Entry fromDatabase = joggl.modelToEntry(dbHandler.getEntryByID(id));
 
-			assertTrue(anEntry.getName().equals(fromDatabase.getName()));
-			assertTrue(anEntry.getClient().equals(fromDatabase.getClient()));
-			assertTrue(anEntry.getProject().equals(fromDatabase.getProject()));
-			assertTrue(anEntry.getDescription().equals(fromDatabase.getDescription()));
-			assertTrue(anEntry.getStartTimeAsString().equals(fromDatabase.getStartTimeAsString()));
-			assertTrue(anEntry.getEndTimeAsString().equals(fromDatabase.getEndTimeAsString()));
+      assertTrue(anEntry.getName().equals(fromDatabase.getName()));
+      assertTrue(anEntry.getClient().equals(fromDatabase.getClient()));
+      assertTrue(anEntry.getProject().equals(fromDatabase.getProject()));
+      assertTrue(anEntry.getDescription().equals(fromDatabase.getDescription()));
+      assertTrue(anEntry.getStartTimeAsString().equals(fromDatabase.getStartTimeAsString()));
+      assertTrue(anEntry.getEndTimeAsString().equals(fromDatabase.getEndTimeAsString()));
 
-		} catch (NoSuchElementException e){
-			System.err.println(e.getMessage());
-		}
-	}
+    } catch (NoSuchElementException e) {
+      System.err.println(e.getMessage());
+    }
+  }
 
-	@Test
-	public void saveEntriesToDatabaseAndGetByPropertyTest(){
-		dbHandler.save(joggl.entryToModel(anEntry));
-		dbHandler.save(joggl.entryToModel(anEntryWithDifferentName));
+  @Test
+  public void saveEntriesToDatabaseAndGetByPropertyTest() {
+    dbHandler.save(joggl.entryToModel(anEntry));
+    dbHandler.save(joggl.entryToModel(anEntryWithDifferentName));
 
-		try{
-			List<Entry> fromDatabaseWithName = dbHandler.getEntriesBy(Entry.Property.NAME, anEntry.getName()).
-				stream().map(es -> joggl.modelToEntry(es)).collect(Collectors.toList());
+    try {
+      List<Entry> fromDatabaseWithName =
+          dbHandler.getEntriesBy(Entry.Property.NAME, anEntry.getName()).stream()
+              .map(es -> joggl.modelToEntry(es))
+              .collect(Collectors.toList());
 
-			assertTrue(anEntry.getName().equals(fromDatabaseWithName.get(0).getName()));
-			assertTrue(anEntry.getClient().equals(fromDatabaseWithName.get(0).getClient()));
-			assertTrue(anEntry.getProject().equals(fromDatabaseWithName.get(0).getProject()));
- 		   	assertTrue(anEntry.getDescription().equals(fromDatabaseWithName.get(0).getDescription()));
- 		   	assertTrue(anEntry.getStartTimeAsString().equals(fromDatabaseWithName.get(0).getStartTimeAsString()));
-			assertTrue(anEntry.getEndTimeAsString().equals(fromDatabaseWithName.get(0).getEndTimeAsString()));
+      assertTrue(anEntry.getName().equals(fromDatabaseWithName.get(0).getName()));
+      assertTrue(anEntry.getClient().equals(fromDatabaseWithName.get(0).getClient()));
+      assertTrue(anEntry.getProject().equals(fromDatabaseWithName.get(0).getProject()));
+      assertTrue(anEntry.getDescription().equals(fromDatabaseWithName.get(0).getDescription()));
+      assertTrue(
+          anEntry
+              .getStartTimeAsString()
+              .equals(fromDatabaseWithName.get(0).getStartTimeAsString()));
+      assertTrue(
+          anEntry.getEndTimeAsString().equals(fromDatabaseWithName.get(0).getEndTimeAsString()));
 
-			List<Entry> fromDatabaseWithDifferentName = dbHandler.getEntriesBy(Entry.Property.NAME, anEntryWithDifferentName.getName()).
-				stream().map(es -> joggl.modelToEntry(es)).collect(Collectors.toList());
+      List<Entry> fromDatabaseWithDifferentName =
+          dbHandler.getEntriesBy(Entry.Property.NAME, anEntryWithDifferentName.getName()).stream()
+              .map(es -> joggl.modelToEntry(es))
+              .collect(Collectors.toList());
 
-			assertTrue(anEntryWithDifferentName.getName().equals(fromDatabaseWithDifferentName.get(0).getName()));
-			assertTrue(anEntryWithDifferentName.getClient().equals(fromDatabaseWithDifferentName.get(0).getClient()));
-			assertTrue(anEntryWithDifferentName.getProject().equals(fromDatabaseWithDifferentName.get(0).getProject()));
-			assertTrue(anEntryWithDifferentName.getDescription().equals(fromDatabaseWithDifferentName.get(0).getDescription()));
-			assertTrue(anEntryWithDifferentName.getStartTimeAsString().equals(fromDatabaseWithDifferentName.get(0).getStartTimeAsString()));
-			assertTrue(anEntryWithDifferentName.getEndTimeAsString().equals(fromDatabaseWithDifferentName.get(0).getEndTimeAsString()));
-			
-			List<Entry> fromDatabaseByProject = dbHandler.getEntriesBy(Entry.Property.PROJECT, anEntry.getProject()).
-				stream().map(es -> joggl.modelToEntry(es)).collect(Collectors.toList());
-			
-			assertTrue(fromDatabaseByProject.size() == 2);
+      assertTrue(
+          anEntryWithDifferentName
+              .getName()
+              .equals(fromDatabaseWithDifferentName.get(0).getName()));
+      assertTrue(
+          anEntryWithDifferentName
+              .getClient()
+              .equals(fromDatabaseWithDifferentName.get(0).getClient()));
+      assertTrue(
+          anEntryWithDifferentName
+              .getProject()
+              .equals(fromDatabaseWithDifferentName.get(0).getProject()));
+      assertTrue(
+          anEntryWithDifferentName
+              .getDescription()
+              .equals(fromDatabaseWithDifferentName.get(0).getDescription()));
+      assertTrue(
+          anEntryWithDifferentName
+              .getStartTimeAsString()
+              .equals(fromDatabaseWithDifferentName.get(0).getStartTimeAsString()));
+      assertTrue(
+          anEntryWithDifferentName
+              .getEndTimeAsString()
+              .equals(fromDatabaseWithDifferentName.get(0).getEndTimeAsString()));
 
-		} catch (NoSuchElementException e){
-			System.err.println(e.getMessage());
-		}
-	}
+      List<Entry> fromDatabaseByProject =
+          dbHandler.getEntriesBy(Entry.Property.PROJECT, anEntry.getProject()).stream()
+              .map(es -> joggl.modelToEntry(es))
+              .collect(Collectors.toList());
 
-	@Test
-	public void saveMultipleEntriesToDatabaseAndCountTest(){
+      assertTrue(fromDatabaseByProject.size() == 2);
 
-		dbHandler.save(joggl.entryToModel(anEntry));
-		dbHandler.save(joggl.entryToModel(anEntryWithSameName));
-		dbHandler.save(joggl.entryToModel(anEntryWithDifferentName));
+    } catch (NoSuchElementException e) {
+      System.err.println(e.getMessage());
+    }
+  }
 
-		try{
-			List<Entry> fromDatabaseByName = dbHandler.getEntriesBy(Entry.Property.NAME, anEntry.getName()).
-				stream().map(es -> joggl.modelToEntry(es)).collect(Collectors.toList());
-			List<Entry> fromDatabaseAll = new ArrayList<Entry>();
- 		   	dbHandler.repo.findAll().forEach( e -> {
-				fromDatabaseAll.add(joggl.modelToEntry(e));
-			});
+  @Test
+  public void saveMultipleEntriesToDatabaseAndCountTest() {
 
-			assertThat(fromDatabaseByName.size()).isEqualTo(2);
-			assertThat(fromDatabaseAll.size()).isEqualTo(3);
-			
+    dbHandler.save(joggl.entryToModel(anEntry));
+    dbHandler.save(joggl.entryToModel(anEntryWithSameName));
+    dbHandler.save(joggl.entryToModel(anEntryWithDifferentName));
 
-		} catch (NoSuchElementException e){
-			System.err.println(e.getMessage());
-		}
-	}
+    try {
+      List<Entry> fromDatabaseByName =
+          dbHandler.getEntriesBy(Entry.Property.NAME, anEntry.getName()).stream()
+              .map(es -> joggl.modelToEntry(es))
+              .collect(Collectors.toList());
+      List<Entry> fromDatabaseAll = new ArrayList<Entry>();
+      dbHandler
+          .repo
+          .findAll()
+          .forEach(
+              e -> {
+                fromDatabaseAll.add(joggl.modelToEntry(e));
+              });
+
+      assertThat(fromDatabaseByName.size()).isEqualTo(2);
+      assertThat(fromDatabaseAll.size()).isEqualTo(3);
+
+    } catch (NoSuchElementException e) {
+      System.err.println(e.getMessage());
+    }
+  }
 }

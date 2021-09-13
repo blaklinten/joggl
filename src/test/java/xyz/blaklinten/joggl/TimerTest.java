@@ -11,103 +11,100 @@ import org.junit.jupiter.api.Test;
 
 import xyz.blaklinten.joggl.Models.Entry;
 
-/**
- * Unit test for the Timer component.
- */
+/** Unit test for the Timer component. */
 public class TimerTest {
 
-	private Timer timer = new Timer();
-	private Entry anEntry;
+  private Timer timer = new Timer();
+  private Entry anEntry;
 
-	@BeforeEach
-	public void init(){
-		String client = "The Client";
-		String name = "Test";
-		String project = "Development";
-		String description = "A bunch of tests";
+  @BeforeEach
+  public void init() {
+    String client = "The Client";
+    String name = "Test";
+    String project = "Development";
+    String description = "A bunch of tests";
 
-		anEntry = new Entry(name, client, project, description);
-	}
+    anEntry = new Entry(name, client, project, description);
+  }
 
-	@Test
-	public void startTimerTest(){
-		try{
-			timer.start(anEntry);
-		}
-		catch(Timer.TimerAlreadyRunningException e){
-			System.err.println(e.getMessage());
-		}
-		
-		assertThat(anEntry.getStartTime()).isNotNull();
-		assertTrue(anEntry.getStartTime().isBefore(LocalDateTime.now()));
-		assertTrue(timer.isRunning());
-	}
+  @Test
+  public void startTimerTest() {
+    try {
+      timer.start(anEntry);
+    } catch (Timer.TimerAlreadyRunningException e) {
+      System.err.println(e.getMessage());
+    }
 
-	@Test
-	public void startTimerTwiceTest(){
-		try{
-			timer.start(anEntry);
-		}
-		catch(Timer.TimerAlreadyRunningException e){
-			System.err.println(e.getMessage());
-		}
-		
-		assertThrows(Timer.TimerAlreadyRunningException.class, () -> {
-			timer.start(anEntry);
-		});
-	}
+    assertThat(anEntry.getStartTime()).isNotNull();
+    assertTrue(anEntry.getStartTime().isBefore(LocalDateTime.now()));
+    assertTrue(timer.isRunning());
+  }
 
-	@Test
-	public void stopRunningTimerTest(){
-		try{
-			timer.start(anEntry);
-		}
-		catch(Timer.TimerAlreadyRunningException e){
-			System.err.println(e.getMessage());
-		}
-		
-		try{
-			timer.stop();
-		}
-		catch(Timer.NoActiveTimerException e){
-			System.err.println(e.getMessage());
-		}
+  @Test
+  public void startTimerTwiceTest() {
+    try {
+      timer.start(anEntry);
+    } catch (Timer.TimerAlreadyRunningException e) {
+      System.err.println(e.getMessage());
+    }
 
-		LocalDateTime endTime = anEntry.getEndTime();
-		LocalDateTime startTime = anEntry.getStartTime();
+    assertThrows(
+        Timer.TimerAlreadyRunningException.class,
+        () -> {
+          timer.start(anEntry);
+        });
+  }
 
-		assertThat(endTime).isNotNull();
-		assertThat(startTime).isNotNull();
-		assertTrue(endTime.isAfter(startTime));
-		assertThat(timer.isRunning()).isFalse();
-	}
+  @Test
+  public void stopRunningTimerTest() {
+    try {
+      timer.start(anEntry);
+    } catch (Timer.TimerAlreadyRunningException e) {
+      System.err.println(e.getMessage());
+    }
 
-	@Test
-	public void stopRunningTimerTwiceTest(){
-		try{
-			timer.start(anEntry);
-		}
-		catch(Timer.TimerAlreadyRunningException e){
-			System.err.println(e.getMessage());
-		}
-		
-		try{
-			timer.stop();
-		}
-		catch(Timer.NoActiveTimerException e){
-			System.err.println(e.getMessage());
-		}
+    try {
+      timer.stop();
+    } catch (Timer.NoActiveTimerException e) {
+      System.err.println(e.getMessage());
+    }
 
-		assertThrows(Timer.NoActiveTimerException.class, () -> {
-			timer.stop();
-		});
+    LocalDateTime endTime = anEntry.getEndTime();
+    LocalDateTime startTime = anEntry.getStartTime();
 
-	}
+    assertThat(endTime).isNotNull();
+    assertThat(startTime).isNotNull();
+    assertTrue(endTime.isAfter(startTime));
+    assertThat(timer.isRunning()).isFalse();
+  }
 
-	@Test
-	public void stopNotRunningTimerTest(){
-		assertThrows(Timer.NoActiveTimerException.class, () -> {
-			timer.stop();
-		});
-	}
+  @Test
+  public void stopRunningTimerTwiceTest() {
+    try {
+      timer.start(anEntry);
+    } catch (Timer.TimerAlreadyRunningException e) {
+      System.err.println(e.getMessage());
+    }
+
+    try {
+      timer.stop();
+    } catch (Timer.NoActiveTimerException e) {
+      System.err.println(e.getMessage());
+    }
+
+    assertThrows(
+        Timer.NoActiveTimerException.class,
+        () -> {
+          timer.stop();
+        });
+  }
+
+  @Test
+  public void stopNotRunningTimerTest() {
+    assertThrows(
+        Timer.NoActiveTimerException.class,
+        () -> {
+          timer.stop();
+        });
+  }
 }

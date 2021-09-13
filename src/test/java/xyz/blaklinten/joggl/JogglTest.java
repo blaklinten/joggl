@@ -17,99 +17,91 @@ import xyz.blaklinten.joggl.Models.TimerStatus;
 @SpringBootTest
 public class JogglTest {
 
-	private Logger log = LoggerFactory.getLogger(JogglTest.class);
+  private Logger log = LoggerFactory.getLogger(JogglTest.class);
 
-	@Autowired
-	private Joggl joggl;
+  @Autowired private Joggl joggl;
 
-	private EntryDTO testEntry;
+  private EntryDTO testEntry;
 
-	@BeforeEach
-	public void initEntry(){
-		String name = "A name";
-		String client = "The Client";
-		String project = "Development";
-		String description = "A bunch of tests";
-		String startTime = null;
-		String endTime = null;
+  @BeforeEach
+  public void initEntry() {
+    String name = "A name";
+    String client = "The Client";
+    String project = "Development";
+    String description = "A bunch of tests";
+    String startTime = null;
+    String endTime = null;
 
-		testEntry = new EntryDTO(
-				name,
-				client,
-				project,
-				description,
-				startTime,
-				endTime);
-	}
+    testEntry = new EntryDTO(name, client, project, description, startTime, endTime);
+  }
 
-	@AfterEach
-	public void clearEntry(){
-		testEntry = null;
-		joggl.resetTimer();
-	}
+  @AfterEach
+  public void clearEntry() {
+    testEntry = null;
+    joggl.resetTimer();
+  }
 
-	@Test
-	public void startTimerTest(){
-		try {
-			EntryDTO startedEntry = joggl.startTimer(testEntry);
-			
-			assertThat(startedEntry.getName()).isEqualTo(testEntry.getName());
-			assertThat(startedEntry.getClient()).isEqualTo(testEntry.getClient());
-			assertThat(startedEntry.getProject()).isEqualTo(testEntry.getProject());
-			assertThat(startedEntry.getDescription()).isEqualTo(testEntry.getDescription());
+  @Test
+  public void startTimerTest() {
+    try {
+      EntryDTO startedEntry = joggl.startTimer(testEntry);
 
-			assertThat(startedEntry.getStartTime()).isNotNull();
-			assertThat(startedEntry.getEndTime()).isEqualTo("null");
-		}
-		catch (Timer.TimerAlreadyRunningException e) {
-			log.error(e.getMessage());
-		}
-	}
+      assertThat(startedEntry.getName()).isEqualTo(testEntry.getName());
+      assertThat(startedEntry.getClient()).isEqualTo(testEntry.getClient());
+      assertThat(startedEntry.getProject()).isEqualTo(testEntry.getProject());
+      assertThat(startedEntry.getDescription()).isEqualTo(testEntry.getDescription());
 
-	@Test
-	public void stopTimerTest(){
-		try{
-			assertThrows(Timer.NoActiveTimerException.class, () -> {
-				joggl.stopTimer();
-			});
+      assertThat(startedEntry.getStartTime()).isNotNull();
+      assertThat(startedEntry.getEndTime()).isEqualTo("null");
+    } catch (Timer.TimerAlreadyRunningException e) {
+      log.error(e.getMessage());
+    }
+  }
 
-			joggl.startTimer(testEntry);
+  @Test
+  public void stopTimerTest() {
+    try {
+      assertThrows(
+          Timer.NoActiveTimerException.class,
+          () -> {
+            joggl.stopTimer();
+          });
 
-			EntryDTO stoppedEntry = joggl.stopTimer();
-			assertThat(stoppedEntry.getName()).isEqualTo(testEntry.getName());
-			assertThat(stoppedEntry.getClient()).isEqualTo(testEntry.getClient());
-			assertThat(stoppedEntry.getProject()).isEqualTo(testEntry.getProject());
-			assertThat(stoppedEntry.getDescription()).isEqualTo(testEntry.getDescription());
+      joggl.startTimer(testEntry);
 
-			assertThat(stoppedEntry.getStartTime()).isNotNull();
-			assertThat(stoppedEntry.getEndTime()).isNotNull();
-		}
-		catch (Exception e){
-			log.error(e.getMessage());
-		}
-	}
+      EntryDTO stoppedEntry = joggl.stopTimer();
+      assertThat(stoppedEntry.getName()).isEqualTo(testEntry.getName());
+      assertThat(stoppedEntry.getClient()).isEqualTo(testEntry.getClient());
+      assertThat(stoppedEntry.getProject()).isEqualTo(testEntry.getProject());
+      assertThat(stoppedEntry.getDescription()).isEqualTo(testEntry.getDescription());
 
-	@Test
-	public void getStatusTest(){
-			assertThrows(Timer.NoActiveTimerException.class, () -> {
-				joggl.getStatus();
-			});
+      assertThat(stoppedEntry.getStartTime()).isNotNull();
+      assertThat(stoppedEntry.getEndTime()).isNotNull();
+    } catch (Exception e) {
+      log.error(e.getMessage());
+    }
+  }
 
-		try {
-			joggl.startTimer(testEntry);
+  @Test
+  public void getStatusTest() {
+    assertThrows(
+        Timer.NoActiveTimerException.class,
+        () -> {
+          joggl.getStatus();
+        });
 
-			TimerStatus status = joggl.getStatus();
+    try {
+      joggl.startTimer(testEntry);
 
-			assertThat(status.getName()).isEqualTo(testEntry.getName());
-			assertThat(status.getSeconds()).isNotNull();
-		}
-		catch (Timer.TimerAlreadyRunningException|Timer.NoActiveTimerException e){
-			log.error(e.getMessage());
-		}
-	}
+      TimerStatus status = joggl.getStatus();
 
-	@Test
-	public void sumEntriesbyNameTest(){
+      assertThat(status.getName()).isEqualTo(testEntry.getName());
+      assertThat(status.getSeconds()).isNotNull();
+    } catch (Timer.TimerAlreadyRunningException | Timer.NoActiveTimerException e) {
+      log.error(e.getMessage());
+    }
+  }
 
-	}
+  @Test
+  public void sumEntriesbyNameTest() {}
 }
