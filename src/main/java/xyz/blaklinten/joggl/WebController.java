@@ -4,11 +4,11 @@ import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -39,10 +39,9 @@ public class WebController{
  	 * @throws ResponseStatusException If there already was a timer running.
  	 * */
 	@PostMapping("/start-timer")
-	@ResponseBody
-	public EntryModel startTimer(@RequestBody EntryModel entry){
+	public ResponseEntity<EntryModel> startTimer(@RequestBody EntryModel entry){
 		try{
-			return joggl.startTimer(entry);
+			return new ResponseEntity<EntryModel>(joggl.startTimer(entry), HttpStatus.OK);
 		}
 		catch (Timer.TimerAlreadyRunningException e){
 			// TODO Is this a "good" exception to throw? Is there a better way to react when an error occurs?
@@ -60,10 +59,9 @@ public class WebController{
  	 * @throws ResponseStatusException If there were no timer running.
  	 * */
 	@GetMapping("/stop-timer")
-	@ResponseBody
-	public EntryModel stopTimer(){
+	public ResponseEntity<EntryModel> stopTimer(){
 		try {
-			return joggl.stopTimer();
+			return new ResponseEntity<EntryModel>(joggl.stopTimer(), HttpStatus.OK);
 		}
 		catch (Timer.NoActiveTimerException e) {
 			// TODO Is this a "good" exception to throw? Is there a better way to react when an error occurs?
@@ -81,10 +79,9 @@ public class WebController{
  	 * @throws ResponseStatusException If there were no timer running.
  	 * */
 	@GetMapping("/get-status")
-	@ResponseBody
-	public TimerStatus GetStatus(){
+	public ResponseEntity<TimerStatus> GetStatus(){
 		try {
- 			return joggl.getStatus();
+ 			return new ResponseEntity<TimerStatus>(joggl.getStatus(), HttpStatus.OK);
 		}
 		catch (Timer.NoActiveTimerException e){
 			// TODO Is this a "good" exception to throw? Is there a better way to react when an error occurs?
@@ -104,9 +101,9 @@ public class WebController{
  	 * @throws ResponseStatusException If there were no entries found with the provided name.
  	 * */
 	@GetMapping("/sum-entries-by-name")
-	public AccumulatedTime SumEntriesByName(@RequestParam String name ){
+	public ResponseEntity<AccumulatedTime> SumEntriesByName(@RequestParam String name ){
 		try {
- 			return joggl.sumEntriesbyName(name);
+ 			return new ResponseEntity<AccumulatedTime>(joggl.sumEntriesbyName(name), HttpStatus.OK);
 		}
 		catch (NoSuchElementException e) {
 			// TODO Is this a "good" exception to throw? Is there a better way to react when an error occurs?
@@ -126,9 +123,9 @@ public class WebController{
  	 * @throws ResponseStatusException If there were no entries found with the provided client.
  	 * */
 	@GetMapping("/sum-entries-by-client")
-	public AccumulatedTime SumEntriesByClient(@RequestParam String client){
+	public ResponseEntity<AccumulatedTime> SumEntriesByClient(@RequestParam String client){
 		try {
- 			return joggl.sumEntriesbyClient(client);
+ 			return new ResponseEntity<AccumulatedTime>(joggl.sumEntriesbyClient(client), HttpStatus.OK);
 		}
 		catch (NoSuchElementException e) {
 			// TODO Is this a "good" exception to throw? Is there a better way to react when an error occurs?
@@ -148,9 +145,9 @@ public class WebController{
  	 * @throws ResponseStatusException If there were no entries found with the provided project.
  	 * */
 	@GetMapping("/sum-entries-by-project")
-	public AccumulatedTime SumEntriesByProject(@RequestParam String project){
+	public ResponseEntity<AccumulatedTime> SumEntriesByProject(@RequestParam String project){
 		try {
- 			return joggl.sumEntriesbyProject(project);
+ 			return new ResponseEntity<AccumulatedTime>(joggl.sumEntriesbyProject(project), HttpStatus.OK);
  		} catch (NoSuchElementException e) {
 			// TODO Is this a "good" exception to throw? Is there a better way to react when an error occurs?
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
