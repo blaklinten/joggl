@@ -3,6 +3,7 @@ package xyz.blaklinten.joggl.Database;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +31,15 @@ public class DatabaseHandler {
    * @param entryToSave The entry that is to be saved.
    * @return The unique ID given to the saved entry.
    */
-  public long save(EntryDTO entryToSave) {
+  public CompletableFuture<Long> save(EntryDTO entryToSave) {
     log.info("Saving entry " + entryToSave.getName() + " to database");
+    return CompletableFuture.supplyAsync(
+        () -> {
+          EntryDTO savedEntry = repo.save(entryToSave);
 
-    EntryDTO savedEntry = repo.save(entryToSave);
-
-    log.info("Got ID " + savedEntry.getId() + " from database");
-    return savedEntry.getId();
+          log.info("Got ID " + savedEntry.getId() + " from database");
+          return savedEntry.getId();
+        });
   }
 
   /**
@@ -47,19 +50,22 @@ public class DatabaseHandler {
    * @return If found, this is the entry with the given ID.
    * @throws NoSuchElementException If no entry with the specified ID is found.
    */
-  public EntryDTO getEntryByID(long id) throws NoSuchElementException {
+  public CompletableFuture<EntryDTO> getEntryByID(long id) throws NoSuchElementException {
     log.info("Searching for entry with ID " + id);
 
-    Optional<EntryDTO> result = repo.findById(id);
+    return CompletableFuture.supplyAsync(
+        () -> {
+          Optional<EntryDTO> result = repo.findById(id);
 
-    if (result.isEmpty()) {
-      String errorMessage = "No entry with ID " + id + " exists.";
+          if (result.isEmpty()) {
+            String errorMessage = "No entry with ID " + id + " exists.";
 
-      log.error(errorMessage);
-      throw new NoSuchElementException(errorMessage);
-    } else {
-      return result.get();
-    }
+            log.error(errorMessage);
+            throw new NoSuchElementException(errorMessage);
+          } else {
+            return result.get();
+          }
+        });
   }
 
   /**
@@ -76,32 +82,34 @@ public class DatabaseHandler {
    * @throws NoSuchElementException If the resulting list of entries is empty, i.e. no entries
    *     matched the query.
    */
-  public List<EntryDTO> getEntriesBy(Entry.Property prop, String value)
+  public CompletableFuture<List<EntryDTO>> getEntriesBy(Entry.Property prop, String value)
       throws NoSuchElementException {
-    List<EntryDTO> result;
+    return CompletableFuture.supplyAsync(
+        () -> {
+          List<EntryDTO> result;
+          switch (prop) {
+            case NAME:
+              result = repo.findByName(value);
+              break;
+            case CLIENT:
+              result = repo.findByClient(value);
+              break;
+            case PROJECT:
+              result = repo.findByProject(value);
+              break;
+            default:
+              String errorMessage = "Invalid property";
+              log.error(errorMessage);
+              throw new NoSuchElementException(errorMessage);
+          }
+          if (result.isEmpty()) {
+            String errorMessage = "No entry with " + prop.toString() + " " + value + " exists.";
 
-    switch (prop) {
-      case NAME:
-        result = repo.findByName(value);
-        break;
-      case CLIENT:
-        result = repo.findByClient(value);
-        break;
-      case PROJECT:
-        result = repo.findByProject(value);
-        break;
-      default:
-        String errorMessage = "Invalid property";
-        log.error(errorMessage);
-        throw new NoSuchElementException(errorMessage);
-    }
-    if (result.isEmpty()) {
-      String errorMessage = "No entry with " + prop.toString() + " " + value + " exists.";
-
-      log.error(errorMessage);
-      throw new NoSuchElementException(errorMessage);
-    } else {
-      return result;
-    }
+            log.error(errorMessage);
+            throw new NoSuchElementException(errorMessage);
+          } else {
+            return result;
+          }
+        });
   }
 }

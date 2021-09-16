@@ -4,7 +4,6 @@ import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import reactor.core.publisher.Mono;
 import xyz.blaklinten.joggl.Database.EntryDTO;
 import xyz.blaklinten.joggl.Models.AccumulatedTime;
 import xyz.blaklinten.joggl.Models.TimerStatus;
@@ -34,9 +34,9 @@ public class WebController {
    * @throws ResponseStatusException If there already was a timer running.
    */
   @PostMapping("/start-timer")
-  public ResponseEntity<EntryDTO> startTimer(@RequestBody EntryDTO entry) {
+  public Mono<EntryDTO> startTimer(@RequestBody EntryDTO entry) {
     try {
-      return new ResponseEntity<EntryDTO>(joggl.startTimer(entry), HttpStatus.OK);
+      return Mono.just(joggl.startTimer(entry));
     } catch (Timer.TimerAlreadyRunningException e) {
       // TODO Is this a "good" exception to throw? Is there a better way to react when an error
       // occurs?
@@ -53,9 +53,9 @@ public class WebController {
    * @throws ResponseStatusException If there were no timer running.
    */
   @GetMapping("/stop-timer")
-  public ResponseEntity<EntryDTO> stopTimer() {
+  public Mono<EntryDTO> stopTimer() {
     try {
-      return new ResponseEntity<EntryDTO>(joggl.stopTimer(), HttpStatus.OK);
+      return Mono.fromFuture(joggl.stopTimer());
     } catch (Timer.NoActiveTimerException e) {
       // TODO Is this a "good" exception to throw? Is there a better way to react when an error
       // occurs?
@@ -72,9 +72,9 @@ public class WebController {
    * @throws ResponseStatusException If there were no timer running.
    */
   @GetMapping("/get-status")
-  public ResponseEntity<TimerStatus> GetStatus() {
+  public Mono<TimerStatus> GetStatus() {
     try {
-      return new ResponseEntity<TimerStatus>(joggl.getStatus(), HttpStatus.OK);
+      return Mono.just(joggl.getStatus());
     } catch (Timer.NoActiveTimerException e) {
       // TODO Is this a "good" exception to throw? Is there a better way to react when an error
       // occurs?
@@ -92,9 +92,9 @@ public class WebController {
    * @throws ResponseStatusException If there were no entries found with the provided name.
    */
   @GetMapping("/sum-entries-by-name")
-  public ResponseEntity<AccumulatedTime> SumEntriesByName(@RequestParam String name) {
+  public Mono<AccumulatedTime> SumEntriesByName(@RequestParam String name) {
     try {
-      return new ResponseEntity<AccumulatedTime>(joggl.sumEntriesbyName(name), HttpStatus.OK);
+      return Mono.fromFuture(joggl.sumEntriesbyName(name));
     } catch (NoSuchElementException e) {
       // TODO Is this a "good" exception to throw? Is there a better way to react when an error
       // occurs?
@@ -113,9 +113,9 @@ public class WebController {
    * @throws ResponseStatusException If there were no entries found with the provided client.
    */
   @GetMapping("/sum-entries-by-client")
-  public ResponseEntity<AccumulatedTime> SumEntriesByClient(@RequestParam String client) {
+  public Mono<AccumulatedTime> SumEntriesByClient(@RequestParam String client) {
     try {
-      return new ResponseEntity<AccumulatedTime>(joggl.sumEntriesbyClient(client), HttpStatus.OK);
+      return Mono.fromFuture(joggl.sumEntriesbyClient(client));
     } catch (NoSuchElementException e) {
       // TODO Is this a "good" exception to throw? Is there a better way to react when an error
       // occurs?
@@ -134,9 +134,9 @@ public class WebController {
    * @throws ResponseStatusException If there were no entries found with the provided project.
    */
   @GetMapping("/sum-entries-by-project")
-  public ResponseEntity<AccumulatedTime> SumEntriesByProject(@RequestParam String project) {
+  public Mono<AccumulatedTime> SumEntriesByProject(@RequestParam String project) {
     try {
-      return new ResponseEntity<AccumulatedTime>(joggl.sumEntriesbyProject(project), HttpStatus.OK);
+      return Mono.fromFuture(joggl.sumEntriesbyProject(project));
     } catch (NoSuchElementException e) {
       // TODO Is this a "good" exception to throw? Is there a better way to react when an error
       // occurs?

@@ -69,7 +69,7 @@ public class JogglTest {
 
       joggl.startTimer(testEntry);
 
-      EntryDTO stoppedEntry = joggl.stopTimer();
+      EntryDTO stoppedEntry = joggl.stopTimer().get();
       assertThat(stoppedEntry.getName()).isEqualTo(testEntry.getName());
       assertThat(stoppedEntry.getClient()).isEqualTo(testEntry.getClient());
       assertThat(stoppedEntry.getProject()).isEqualTo(testEntry.getProject());

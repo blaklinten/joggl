@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -62,10 +64,17 @@ public class DatabaseHandlerTest {
 
   @Test
   public void saveOneEntryToAndGetByIDFromDatabaseTest() {
-    long id = dbHandler.save(joggl.entryToModel(anEntry));
 
     try {
-      Entry fromDatabase = joggl.modelToEntry(dbHandler.getEntryByID(id));
+      Long id = dbHandler.save(joggl.entryToDTO(anEntry)).get();
+      Entry fromDatabase =
+          dbHandler
+              .getEntryByID(id)
+              .thenApply(
+                  dto -> {
+                    return joggl.DTOToEntry(dto);
+                  })
+              .get();
 
       assertTrue(anEntry.getName().equals(fromDatabase.getName()));
       assertTrue(anEntry.getClient().equals(fromDatabase.getClient()));
@@ -74,21 +83,27 @@ public class DatabaseHandlerTest {
       assertTrue(anEntry.getStartTimeAsString().equals(fromDatabase.getStartTimeAsString()));
       assertTrue(anEntry.getEndTimeAsString().equals(fromDatabase.getEndTimeAsString()));
 
-    } catch (NoSuchElementException e) {
+    } catch (InterruptedException | ExecutionException | NoSuchElementException e) {
       System.err.println(e.getMessage());
     }
   }
 
   @Test
   public void saveEntriesToDatabaseAndGetByPropertyTest() {
-    dbHandler.save(joggl.entryToModel(anEntry));
-    dbHandler.save(joggl.entryToModel(anEntryWithDifferentName));
+    dbHandler.save(joggl.entryToDTO(anEntry)).join();
+    dbHandler.save(joggl.entryToDTO(anEntryWithDifferentName)).join();
 
     try {
       List<Entry> fromDatabaseWithName =
-          dbHandler.getEntriesBy(Entry.Property.NAME, anEntry.getName()).stream()
-              .map(es -> joggl.modelToEntry(es))
-              .collect(Collectors.toList());
+          dbHandler
+              .getEntriesBy(Entry.Property.NAME, anEntry.getName())
+              .thenApply(
+                  list -> {
+                    return list.stream()
+                        .map(es -> joggl.DTOToEntry(es))
+                        .collect(Collectors.toList());
+                  })
+              .get();
 
       assertTrue(anEntry.getName().equals(fromDatabaseWithName.get(0).getName()));
       assertTrue(anEntry.getClient().equals(fromDatabaseWithName.get(0).getClient()));
@@ -102,8 +117,9 @@ public class DatabaseHandlerTest {
           anEntry.getEndTimeAsString().equals(fromDatabaseWithName.get(0).getEndTimeAsString()));
 
       List<Entry> fromDatabaseWithDifferentName =
-          dbHandler.getEntriesBy(Entry.Property.NAME, anEntryWithDifferentName.getName()).stream()
-              .map(es -> joggl.modelToEntry(es))
+          dbHandler.getEntriesBy(Entry.Property.NAME, anEntryWithDifferentName.getName()).get()
+              .stream()
+              .map(es -> joggl.DTOToEntry(es))
               .collect(Collectors.toList());
 
       assertTrue(
@@ -132,13 +148,13 @@ public class DatabaseHandlerTest {
               .equals(fromDatabaseWithDifferentName.get(0).getEndTimeAsString()));
 
       List<Entry> fromDatabaseByProject =
-          dbHandler.getEntriesBy(Entry.Property.PROJECT, anEntry.getProject()).stream()
-              .map(es -> joggl.modelToEntry(es))
+          dbHandler.getEntriesBy(Entry.Property.PROJECT, anEntry.getProject()).get().stream()
+              .map(es -> joggl.DTOToEntry(es))
               .collect(Collectors.toList());
 
       assertTrue(fromDatabaseByProject.size() == 2);
 
-    } catch (NoSuchElementException e) {
+    } catch (InterruptedException | ExecutionException | NoSuchElementException e) {
       System.err.println(e.getMessage());
     }
   }
@@ -146,14 +162,14 @@ public class DatabaseHandlerTest {
   @Test
   public void saveMultipleEntriesToDatabaseAndCountTest() {
 
-    dbHandler.save(joggl.entryToModel(anEntry));
-    dbHandler.save(joggl.entryToModel(anEntryWithSameName));
-    dbHandler.save(joggl.entryToModel(anEntryWithDifferentName));
+    dbHandler.save(joggl.entryToDTO(anEntry)).join();
+    dbHandler.save(joggl.entryToDTO(anEntryWithSameName)).join();
+    dbHandler.save(joggl.entryToDTO(anEntryWithDifferentName)).join();
 
     try {
       List<Entry> fromDatabaseByName =
-          dbHandler.getEntriesBy(Entry.Property.NAME, anEntry.getName()).stream()
-              .map(es -> joggl.modelToEntry(es))
+          dbHandler.getEntriesBy(Entry.Property.NAME, anEntry.getName()).get().stream()
+              .map(es -> joggl.DTOToEntry(es))
               .collect(Collectors.toList());
       List<Entry> fromDatabaseAll = new ArrayList<Entry>();
       dbHandler
@@ -161,13 +177,13 @@ public class DatabaseHandlerTest {
           .findAll()
           .forEach(
               e -> {
-                fromDatabaseAll.add(joggl.modelToEntry(e));
+                fromDatabaseAll.add(joggl.DTOToEntry(e));
               });
 
       assertThat(fromDatabaseByName.size()).isEqualTo(2);
       assertThat(fromDatabaseAll.size()).isEqualTo(3);
 
-    } catch (NoSuchElementException e) {
+    } catch (InterruptedException | ExecutionException | NoSuchElementException e) {
       System.err.println(e.getMessage());
     }
   }
