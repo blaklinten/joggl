@@ -68,7 +68,7 @@ public class Entry {
     }
   }
 
-  private long id;
+  private Long id;
   private String name;
   private String client;
   private String project;
@@ -95,7 +95,7 @@ public class Entry {
    * @param endTime The end time of the entry.
    */
   public Entry(
-      long id,
+      Long id,
       String name,
       String client,
       String project,
@@ -135,7 +135,7 @@ public class Entry {
    *
    * @return The ID of the current entry.
    */
-  public long getID() {
+  public Long getID() {
     return id;
   }
 

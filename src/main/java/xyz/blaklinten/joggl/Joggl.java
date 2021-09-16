@@ -1,7 +1,9 @@
 package xyz.blaklinten.joggl;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +43,7 @@ public class Joggl {
 
     log.info("Started entry " + newEntry.getName());
 
-    return entryToModel(newEntry);
+    return entryToDTO(newEntry);
   }
 
   /**
@@ -50,19 +52,23 @@ public class Joggl {
    * @return The recently stopped and saved entry.
    * @throws Timer.NoActiveTimerException If there were no running timer.
    */
-  public EntryDTO stopTimer() throws Timer.NoActiveTimerException {
+  public CompletableFuture<EntryDTO> stopTimer() throws Timer.NoActiveTimerException {
     log.info("Incoming stop request");
 
     Entry stoppedEntry;
     EntryDTO stoppedEntryDTO;
 
     stoppedEntry = timer.stop();
-    stoppedEntryDTO = entryToModel(stoppedEntry);
-    dbHandler.save(stoppedEntryDTO);
+    stoppedEntryDTO = entryToDTO(stoppedEntry);
 
-    log.info("Stopped entry " + stoppedEntry.getName());
-
-    return stoppedEntryDTO;
+    return dbHandler
+        .save(stoppedEntryDTO)
+        .thenApply(
+            id -> {
+              stoppedEntryDTO.updateID(id);
+              log.info("Stopped entry " + stoppedEntry.getName());
+              return stoppedEntryDTO;
+            });
   }
 
   /** This method is mostly used by Tests to reset the timer in between runs. */
@@ -90,7 +96,8 @@ public class Joggl {
    * @param name The name to use when searching for entries in the database.
    * @return The result of calling calculateSum with the provided name
    */
-  public AccumulatedTime sumEntriesbyName(String name) throws NoSuchElementException {
+  public CompletableFuture<AccumulatedTime> sumEntriesbyName(String name)
+      throws NoSuchElementException {
     log.info("Incoming sum-by-name request");
 
     return calculateSum(Entry.Property.NAME, name);
@@ -103,7 +110,8 @@ public class Joggl {
    * @param client The client to use when searching for entries in the database.
    * @return The result of calling calculateSum with the provided client
    */
-  public AccumulatedTime sumEntriesbyClient(String client) throws NoSuchElementException {
+  public CompletableFuture<AccumulatedTime> sumEntriesbyClient(String client)
+      throws NoSuchElementException {
     log.info("Incoming sum-by-client request");
 
     return calculateSum(Entry.Property.CLIENT, client);
@@ -118,7 +126,8 @@ public class Joggl {
    * @throws NoSuchElementException If no element with that property value was found in the
    *     database.
    */
-  public AccumulatedTime sumEntriesbyProject(String project) throws NoSuchElementException {
+  public CompletableFuture<AccumulatedTime> sumEntriesbyProject(String project)
+      throws NoSuchElementException {
     log.info("Incoming sum-by-project request");
 
     return calculateSum(Entry.Property.PROJECT, project);
@@ -133,13 +142,22 @@ public class Joggl {
    * @param value The value of the property to use as key when searching the database.
    * @return The resulting duration of all the entries with matching prop values.
    */
-  private AccumulatedTime calculateSum(Entry.Property prop, String value) {
-    Duration sum =
-        dbHandler.getEntriesBy(prop, value).stream()
-            .map(em -> modelToEntry(em).getDuration())
-            .reduce(Duration.ZERO, (acc, current) -> acc = acc.plus(current));
+  private CompletableFuture<AccumulatedTime> calculateSum(Entry.Property prop, String value) {
+    CompletableFuture<List<EntryDTO>> result = dbHandler.getEntriesBy(prop, value);
+    CompletableFuture<Duration> sum =
+        result.thenApply(
+            list -> {
+              return list.stream()
+                  .map(dto -> DTOToEntry(dto).getDuration())
+                  .reduce(Duration.ZERO, (acc, current) -> acc = acc.plus(current));
+            });
+    CompletableFuture<AccumulatedTime> accumulatedTime =
+        sum.thenApply(
+            totalTime -> {
+              return new AccumulatedTime(prop.toString(), value, totalTime);
+            });
 
-    return new AccumulatedTime(prop.toString(), value, sum);
+    return accumulatedTime;
   }
 
   /**
@@ -149,7 +167,7 @@ public class Joggl {
    * @param entry The entry to convert
    * @return The entryDTO representation of the entry.
    */
-  public EntryDTO entryToModel(Entry entry) {
+  public EntryDTO entryToDTO(Entry entry) {
 
     return new EntryDTO(
         entry.getName(),
@@ -161,13 +179,13 @@ public class Joggl {
   }
 
   /**
-   * This method is used to convert an entryToModel into something more convenient for internal use,
+   * This method is used to convert an entryDTO into something more convenient for internal use,
    * i.e. an Entry.
    *
    * @param entryDTO The entryDTO to convert
    * @return The Entry representation of the entryDTO.
    */
-  public Entry modelToEntry(EntryDTO entryDTO) {
+  public Entry DTOToEntry(EntryDTO entryDTO) {
     return new Entry(
         entryDTO.getId(),
         entryDTO.getName(),

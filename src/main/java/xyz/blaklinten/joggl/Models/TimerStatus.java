@@ -6,7 +6,7 @@ package xyz.blaklinten.joggl.Models;
  */
 public class TimerStatus {
 
-  private long id;
+  private Long id;
   private String name;
   private String client;
   private String project;
@@ -89,7 +89,7 @@ public class TimerStatus {
    *
    * @return The ID of the currently running entry.
    */
-  public long getId() {
+  public Long getId() {
     return id;
   }
 }

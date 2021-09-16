@@ -23,7 +23,7 @@ public class EntryDTO implements Serializable {
    *
    * @return The unique ID of this entry.
    */
-  public long getId() {
+  public Long getId() {
     return id;
   }
 
@@ -84,7 +84,7 @@ public class EntryDTO implements Serializable {
   /** The unique ID of this entry. */
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private long id;
+  private Long id;
 
   /** The name of this entry. */
   @Column(name = "name")
@@ -136,5 +136,9 @@ public class EntryDTO implements Serializable {
     this.description = description;
     this.startTime = startTime;
     this.endTime = endTime;
+  }
+
+  public void updateID(Long newID) {
+    this.id = newID;
   }
 }
