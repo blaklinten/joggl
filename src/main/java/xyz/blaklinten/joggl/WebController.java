@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +24,8 @@ import xyz.blaklinten.joggl.Models.TimerStatus;
 @RestController
 public class WebController {
 
+    final String ORIGINS = "http://localhost:3000";
+
   @Autowired Joggl joggl;
 
   /**
@@ -33,6 +36,7 @@ public class WebController {
    * @return The resulting entry that was started.
    * @throws ResponseStatusException If there already was a timer running.
    */
+  @CrossOrigin(origins = ORIGINS)
   @PostMapping("/start-timer")
   public Mono<EntryDTO> startTimer(@RequestBody EntryDTO entry) {
     try {
@@ -52,6 +56,7 @@ public class WebController {
    * @return The resulting entry that was stopped.
    * @throws ResponseStatusException If there were no timer running.
    */
+  @CrossOrigin(origins = ORIGINS)
   @GetMapping("/stop-timer")
   public Mono<EntryDTO> stopTimer() {
     try {
@@ -71,6 +76,7 @@ public class WebController {
    * @return The status of the currently running tiemr.
    * @throws ResponseStatusException If there were no timer running.
    */
+  @CrossOrigin(origins = ORIGINS)
   @GetMapping("/get-status")
   public Mono<TimerStatus> GetStatus() {
     try {
@@ -91,6 +97,7 @@ public class WebController {
    * @return Time The total accumulated time over all entries with the provided name.
    * @throws ResponseStatusException If there were no entries found with the provided name.
    */
+  @CrossOrigin(origins = ORIGINS)
   @GetMapping("/sum-entries-by-name")
   public Mono<AccumulatedTime> SumEntriesByName(@RequestParam String name) {
     try {
@@ -112,6 +119,7 @@ public class WebController {
    * @return Time The total accumulated time over all entries with the provided client.
    * @throws ResponseStatusException If there were no entries found with the provided client.
    */
+  @CrossOrigin(origins = ORIGINS)
   @GetMapping("/sum-entries-by-client")
   public Mono<AccumulatedTime> SumEntriesByClient(@RequestParam String client) {
     try {
@@ -133,6 +141,7 @@ public class WebController {
    * @return Time The total accumulated time over all entries with the provided project.
    * @throws ResponseStatusException If there were no entries found with the provided project.
    */
+  @CrossOrigin(origins = ORIGINS)
   @GetMapping("/sum-entries-by-project")
   public Mono<AccumulatedTime> SumEntriesByProject(@RequestParam String project) {
     try {
