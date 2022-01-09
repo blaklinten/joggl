@@ -7,15 +7,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import xyz.blaklinten.joggl.Joggl;
 import xyz.blaklinten.joggl.Models.Entry;
 
@@ -117,7 +114,9 @@ public class DatabaseHandlerTest {
           anEntry.getEndTimeAsString().equals(fromDatabaseWithName.get(0).getEndTimeAsString()));
 
       List<Entry> fromDatabaseWithDifferentName =
-          dbHandler.getEntriesBy(Entry.Property.NAME, anEntryWithDifferentName.getName()).get()
+          dbHandler
+              .getEntriesBy(Entry.Property.NAME, anEntryWithDifferentName.getName())
+              .get()
               .stream()
               .map(es -> joggl.DTOToEntry(es))
               .collect(Collectors.toList());

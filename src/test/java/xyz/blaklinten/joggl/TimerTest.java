@@ -5,10 +5,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import xyz.blaklinten.joggl.Models.Entry;
 
 /** Unit test for the Timer component. */
