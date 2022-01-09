@@ -4,12 +4,10 @@ import java.time.Duration;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import xyz.blaklinten.joggl.Database.DatabaseHandler;
 import xyz.blaklinten.joggl.Database.EntryDTO;
 import xyz.blaklinten.joggl.Models.AccumulatedTime;

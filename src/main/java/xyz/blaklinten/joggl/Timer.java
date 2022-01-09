@@ -1,13 +1,11 @@
 package xyz.blaklinten.joggl;
 
 import java.time.LocalDateTime;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import xyz.blaklinten.joggl.Models.TimerStatus;
 import xyz.blaklinten.joggl.Models.Entry;
+import xyz.blaklinten.joggl.Models.TimerStatus;
 
 /** This is a class the encapsulate all the necessary functionality to act as a Timer. */
 @Component

@@ -1,7 +1,6 @@
 package xyz.blaklinten.joggl;
 
 import java.util.NoSuchElementException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
 import reactor.core.publisher.Mono;
 import xyz.blaklinten.joggl.Database.EntryDTO;
 import xyz.blaklinten.joggl.Models.AccumulatedTime;
@@ -24,7 +22,7 @@ import xyz.blaklinten.joggl.Models.TimerStatus;
 @RestController
 public class WebController {
 
-    final String ORIGINS = "http://localhost:3000";
+  final String ORIGINS = "http://localhost:3000";
 
   @Autowired Joggl joggl;
 

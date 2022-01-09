@@ -2,10 +2,6 @@ package xyz.blaklinten.joggl.Utils;
 
 import xyz.blaklinten.joggl.Models.*;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.Scanner;
-
 /** This is a simple CLI that can be used instead of the WebController. */
 public class JogglCLI {
   /*
