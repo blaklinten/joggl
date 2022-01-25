@@ -77,6 +77,21 @@
           <version>3.0.2</version>
         </plugin>
         <plugin>
+	      <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <configuration>
+            <fork>true</fork>
+            <mainClass>xyz.blaklinten.joggl.App</mainClass>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>repaclage</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
           <artifactId>maven-install-plugin</artifactId>
           <version>2.5.2</version>
         </plugin>
@@ -93,10 +108,6 @@
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.0.0</version>
         </plugin>
-        <plugin>
-		  <groupId>org.springframework.boot</groupId>
-		  <artifactId>spring-boot-maven-plugin</artifactId>
-		</plugin>
 		<plugin>
 		  <groupId>org.apache.maven.plugins</groupId>
 		  <artifactId>maven-javadoc-plugin</artifactId>
