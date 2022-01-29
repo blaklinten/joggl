@@ -16,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import xyz.blaklinten.joggl.Joggl;
 import xyz.blaklinten.joggl.Models.Entry;
 
-/** Unit test for the Databasehandler component. */
 @SpringBootTest
 public class DatabaseHandlerTest {
 

@@ -2,7 +2,6 @@ package xyz.blaklinten.joggl.Utils;
 
 import xyz.blaklinten.joggl.Models.*;
 
-/** This is a simple CLI that can be used instead of the WebController. */
 public class JogglCLI {
   /*
   private static Boolean exiting = false;

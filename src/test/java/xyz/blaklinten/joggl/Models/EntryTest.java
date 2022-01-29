@@ -11,7 +11,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 
-/** Unit test for an Entry */
 public class EntryTest {
   /* For testing with single Entry */
   String client = "The Client";
