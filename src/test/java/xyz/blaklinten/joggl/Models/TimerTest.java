@@ -1,4 +1,4 @@
-package xyz.blaklinten.joggl;
+package xyz.blaklinten.joggl.Models;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;

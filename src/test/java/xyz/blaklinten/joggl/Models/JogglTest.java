@@ -1,4 +1,4 @@
-package xyz.blaklinten.joggl;
+package xyz.blaklinten.joggl.Models;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import xyz.blaklinten.joggl.Database.EntryDTO;
-import xyz.blaklinten.joggl.Models.TimerStatus;
 
 @SpringBootTest
 public class JogglTest {

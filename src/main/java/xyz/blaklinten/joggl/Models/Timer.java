@@ -1,16 +1,13 @@
-package xyz.blaklinten.joggl;
+package xyz.blaklinten.joggl.Models;
 
 import java.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import xyz.blaklinten.joggl.Models.Entry;
-import xyz.blaklinten.joggl.Models.TimerStatus;
 
 @Component
+@Slf4j
 public class Timer {
-
-  private Logger log = LoggerFactory.getLogger(Timer.class);
 
   private Entry entry = null;
 
@@ -18,7 +15,7 @@ public class Timer {
     if (isNotRunning()) {
       entry = newEntry;
 
-      entry.update(Entry.Property.STARTTIME, LocalDateTime.now());
+      entry.update(Entry.Property.START_TIME, LocalDateTime.now());
       log.info("Starting new entry");
     } else {
       String errorMessage = "A timer is already running!";
@@ -31,7 +28,7 @@ public class Timer {
   public Entry stop() throws NoActiveTimerException {
 
     if (isRunning()) {
-      entry.update(Entry.Property.ENDTIME, LocalDateTime.now());
+      entry.update(Entry.Property.END_TIME, LocalDateTime.now());
 
       Entry stoppedEntry = entry;
 
@@ -63,20 +60,20 @@ public class Timer {
   }
 
   public Boolean isRunning() {
-    return (entry != null) ? true : false;
+    return entry != null;
   }
 
   public Boolean isNotRunning() {
-    return (entry == null) ? true : false;
+    return entry == null;
   }
 
-  public class NoActiveTimerException extends Exception {
+  public static class NoActiveTimerException extends Exception {
     public NoActiveTimerException(String errorMessage) {
       super(errorMessage);
     }
   }
 
-  public class TimerAlreadyRunningException extends Exception {
+  public static class TimerAlreadyRunningException extends Exception {
     public TimerAlreadyRunningException(String errorMessage) {
       super(errorMessage);
     }

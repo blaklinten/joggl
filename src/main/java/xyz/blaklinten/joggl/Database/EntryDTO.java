@@ -1,44 +1,18 @@
 package xyz.blaklinten.joggl.Database;
 
-import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
+import javax.persistence.*;
+import java.io.Serializable;
+
+@Getter
+@Builder
+@AllArgsConstructor
 @Entity
 @Table(name = "entries")
 public class EntryDTO implements Serializable {
-
-  public Long getId() {
-    return id;
-  }
-
-  public String getClient() {
-    return client;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getProject() {
-    return project;
-  }
-
-  public String getStartTime() {
-    return startTime;
-  }
-
-  public String getEndTime() {
-    return endTime;
-  }
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -62,22 +36,25 @@ public class EntryDTO implements Serializable {
   @Column(name = "endTime")
   private String endTime;
 
-  protected EntryDTO() {}
-
   public EntryDTO(
       String name,
       String client,
       String project,
       String description,
-      String startTime,
-      String endTime) {
-    this.name = name;
-    this.client = client;
-    this.project = project;
-    this.description = description;
-    this.startTime = startTime;
-    this.endTime = endTime;
+      String startTimeAsString,
+      String endTimeAsString) {
+    EntryDTO.builder()
+        .name(name)
+        .client(client)
+        .project(project)
+        .description(description)
+        .startTime(startTimeAsString)
+        .endTime(endTimeAsString)
+        .build();
   }
+
+  // TODO is this needed?
+  // protected EntryDTO() {}
 
   public void updateID(Long newID) {
     this.id = newID;

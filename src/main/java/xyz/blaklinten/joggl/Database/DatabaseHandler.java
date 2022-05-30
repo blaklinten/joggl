@@ -4,16 +4,16 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import xyz.blaklinten.joggl.Models.Entry;
 
+@Slf4j
 @Component
+@AllArgsConstructor
 public class DatabaseHandler {
-
-  private Logger log = LoggerFactory.getLogger(DatabaseHandler.class);
 
   @Autowired Repository repo;
 
@@ -37,7 +37,6 @@ public class DatabaseHandler {
 
           if (result.isEmpty()) {
             String errorMessage = "No entry with ID " + id + " exists.";
-
             log.error(errorMessage);
             throw new NoSuchElementException(errorMessage);
           } else {
@@ -67,7 +66,7 @@ public class DatabaseHandler {
               throw new NoSuchElementException(errorMessage);
           }
           if (result.isEmpty()) {
-            String errorMessage = "No entry with " + prop.toString() + " " + value + " exists.";
+            String errorMessage = "No entry with " + prop + " " + value + " exists.";
 
             log.error(errorMessage);
             throw new NoSuchElementException(errorMessage);

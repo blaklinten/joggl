@@ -1,22 +1,19 @@
-package xyz.blaklinten.joggl;
+package xyz.blaklinten.joggl.Models;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import xyz.blaklinten.joggl.Database.DatabaseHandler;
+import xyz.blaklinten.joggl.Database.EntryDTO;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import xyz.blaklinten.joggl.Database.DatabaseHandler;
-import xyz.blaklinten.joggl.Database.EntryDTO;
-import xyz.blaklinten.joggl.Models.AccumulatedTime;
-import xyz.blaklinten.joggl.Models.Entry;
-import xyz.blaklinten.joggl.Models.TimerStatus;
 
 @Component
+@Slf4j
 public class Joggl {
-  private Logger log = LoggerFactory.getLogger(Joggl.class);
 
   @Autowired private Timer timer;
 
@@ -54,10 +51,6 @@ public class Joggl {
             });
   }
 
-  public void resetTimer() {
-    timer.reset();
-  }
-
   public TimerStatus getStatus() throws Timer.NoActiveTimerException {
     log.info("Incoming status request");
 
@@ -89,21 +82,15 @@ public class Joggl {
     CompletableFuture<List<EntryDTO>> result = dbHandler.getEntriesBy(prop, value);
     CompletableFuture<Duration> sum =
         result.thenApply(
-            list -> {
-              return list.stream()
-                  .map(dto -> DTOToEntry(dto).getDuration())
-                  .reduce(Duration.ZERO, (acc, current) -> acc = acc.plus(current));
-            });
-    CompletableFuture<AccumulatedTime> accumulatedTime =
-        sum.thenApply(
-            totalTime -> {
-              return new AccumulatedTime(prop.toString(), value, totalTime);
-            });
+            list ->
+                list.stream()
+                    .map(dto -> DTOToEntry(dto).getDuration())
+                    .reduce(Duration.ZERO, (acc, current) -> acc = acc.plus(current)));
 
-    return accumulatedTime;
+    return sum.thenApply(totalTime -> new AccumulatedTime(prop.toString(), value, totalTime));
   }
 
-  public EntryDTO entryToDTO(Entry entry) {
+  public static EntryDTO entryToDTO(Entry entry) {
 
     return new EntryDTO(
         entry.getName(),
@@ -114,7 +101,7 @@ public class Joggl {
         entry.getEndTimeAsString());
   }
 
-  public Entry DTOToEntry(EntryDTO entryDTO) {
+  public static Entry DTOToEntry(EntryDTO entryDTO) {
     return new Entry(
         entryDTO.getId(),
         entryDTO.getName(),

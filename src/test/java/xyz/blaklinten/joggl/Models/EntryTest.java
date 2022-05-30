@@ -50,7 +50,7 @@ public class EntryTest {
   @Test
   public void startEntryTest() {
     assertTrue(anEntry.getStartTime() == null);
-    anEntry.update(Entry.Property.STARTTIME, LocalDateTime.now());
+    anEntry.update(Entry.Property.START_TIME, LocalDateTime.now());
 
     assertTrue(anEntry.getClient() == client);
     assertTrue(anEntry.getDescription() == description);
@@ -63,7 +63,7 @@ public class EntryTest {
 
   @Test
   public void CalculateDurationOfRunningEntryTest() {
-    anEntry.update(Entry.Property.STARTTIME, LocalDateTime.now());
+    anEntry.update(Entry.Property.START_TIME, LocalDateTime.now());
     assertTrue(anEntry.getEndTime() == null);
     assertFalse(anEntry.getDuration().isZero());
   }
@@ -72,13 +72,13 @@ public class EntryTest {
   public void endEntryTest() {
     final CountDownLatch waiter = new CountDownLatch(1);
 
-    anEntry.update(Entry.Property.STARTTIME, LocalDateTime.now());
+    anEntry.update(Entry.Property.START_TIME, LocalDateTime.now());
     try {
       waiter.await(1000, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
       System.err.println(e.getMessage());
     }
-    anEntry.update(Entry.Property.ENDTIME, LocalDateTime.now());
+    anEntry.update(Entry.Property.END_TIME, LocalDateTime.now());
 
     assertTrue(anEntry.getClient() == client);
     assertTrue(anEntry.getDescription() == description);
@@ -117,11 +117,11 @@ public class EntryTest {
     anEntry.update(Entry.Property.NAME, newName);
     assertTrue(anEntry.getName() == newName);
     assertTrue(anEntry.getName() != name);
-    anEntry.update(Entry.Property.STARTTIME, newStartTime);
+    anEntry.update(Entry.Property.START_TIME, newStartTime);
     assertTrue(anEntry.getStartTime() == newStartTime);
     assertTrue(anEntry.getStartTime() != oldStartTime);
 
-    anEntry.update(Entry.Property.ENDTIME, newEndTime);
+    anEntry.update(Entry.Property.END_TIME, newEndTime);
     assertTrue(anEntry.getEndTime() == newEndTime);
     assertTrue(anEntry.getEndTime() != oldEndTime);
   }
