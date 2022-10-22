@@ -1,0 +1,14 @@
+version: "3"
+services:
+  db:
+      image: mariadb
+      restart: unless-stopped
+      environment:
+        MYSQL_DATABASE: test
+        MYSQL_PASSWORD: test
+        MYSQL_USER: blaklinten
+        MYSQL_ROOT_PASSWORD: root_password
+      volumes:
+        - /tmp/mariadb/test:/var/lib/mysql/
+      ports:
+        - 3306:3306
