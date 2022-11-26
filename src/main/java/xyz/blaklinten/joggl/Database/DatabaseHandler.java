@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import xyz.blaklinten.joggl.Models.Entry;
+import xyz.blaklinten.joggl.Model.Entry;
 
 /**
  * DatabaseHandler This class encapsulates the underlying database repository. An instance of a

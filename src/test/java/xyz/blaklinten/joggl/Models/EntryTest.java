@@ -1,4 +1,4 @@
-package xyz.blaklinten.joggl.Models;
+package xyz.blaklinten.joggl.Model;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

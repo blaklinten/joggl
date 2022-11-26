@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 import xyz.blaklinten.joggl.Database.EntryDTO;
-import xyz.blaklinten.joggl.Models.AccumulatedTime;
-import xyz.blaklinten.joggl.Models.TimerStatus;
+import xyz.blaklinten.joggl.Model.AccumulatedTime;
+import xyz.blaklinten.joggl.Model.TimerStatus;
 
 /**
  * This is the web layer of the app. This class handles the REST-communication and makes sure to

@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import xyz.blaklinten.joggl.Models.Entry;
-import xyz.blaklinten.joggl.Models.TimerStatus;
+import xyz.blaklinten.joggl.Model.Entry;
+import xyz.blaklinten.joggl.Model.TimerStatus;
 
 /** This is a class the encapsulate all the necessary functionality to act as a Timer. */
 @Component

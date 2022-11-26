@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import xyz.blaklinten.joggl.Database.DatabaseHandler;
 import xyz.blaklinten.joggl.Database.EntryDTO;
-import xyz.blaklinten.joggl.Models.AccumulatedTime;
-import xyz.blaklinten.joggl.Models.Entry;
-import xyz.blaklinten.joggl.Models.TimerStatus;
+import xyz.blaklinten.joggl.Model.AccumulatedTime;
+import xyz.blaklinten.joggl.Model.Entry;
+import xyz.blaklinten.joggl.Model.TimerStatus;
 
 /** This is the top lever representation of a Joggl instance, i.e. the full application. */
 @Component
