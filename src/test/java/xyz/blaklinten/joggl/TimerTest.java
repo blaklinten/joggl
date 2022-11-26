@@ -5,14 +5,16 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import xyz.blaklinten.joggl.Model.Entry;
+import xyz.blaklinten.joggl.model.Entry;
 
 /** Unit test for the Timer component. */
-public class TimerTest {
+class TimerTest {
 
-  private Timer timer = new Timer();
+  private final Timer timer = new Timer();
   private Entry anEntry;
 
   @BeforeEach
@@ -26,7 +28,7 @@ public class TimerTest {
   }
 
   @Test
-  public void startTimerTest() {
+  void startTimerTest() {
     try {
       timer.start(anEntry);
     } catch (Timer.TimerAlreadyRunningException e) {
@@ -34,12 +36,12 @@ public class TimerTest {
     }
 
     assertThat(anEntry.getStartTime()).isNotNull();
-    assertTrue(anEntry.getStartTime().isBefore(LocalDateTime.now()));
-    assertTrue(timer.isRunning());
+    Assertions.assertTrue(anEntry.getStartTime().isBefore(LocalDateTime.now()));
+    Assertions.assertTrue(timer.isRunning());
   }
 
   @Test
-  public void startTimerTwiceTest() {
+  void startTimerTwiceTest() {
     try {
       timer.start(anEntry);
     } catch (Timer.TimerAlreadyRunningException e) {
@@ -54,7 +56,7 @@ public class TimerTest {
   }
 
   @Test
-  public void stopRunningTimerTest() {
+  void stopRunningTimerTest() {
     try {
       timer.start(anEntry);
     } catch (Timer.TimerAlreadyRunningException e) {
@@ -70,14 +72,14 @@ public class TimerTest {
     LocalDateTime endTime = anEntry.getEndTime();
     LocalDateTime startTime = anEntry.getStartTime();
 
-    assertThat(endTime).isNotNull();
-    assertThat(startTime).isNotNull();
-    assertTrue(endTime.isAfter(startTime));
-    assertThat(timer.isRunning()).isFalse();
+    Assertions.assertNotEquals(null, endTime);
+    Assertions.assertNotEquals(null, startTime);
+    Assertions.assertTrue(endTime.isAfter(startTime));
+    Assertions.assertFalse(timer.isRunning());
   }
 
   @Test
-  public void stopRunningTimerTwiceTest() {
+  void stopRunningTimerTwiceTest() {
     try {
       timer.start(anEntry);
     } catch (Timer.TimerAlreadyRunningException e) {
@@ -92,17 +94,13 @@ public class TimerTest {
 
     assertThrows(
         Timer.NoActiveTimerException.class,
-        () -> {
-          timer.stop();
-        });
+            timer::stop);
   }
 
   @Test
-  public void stopNotRunningTimerTest() {
+  void stopNotRunningTimerTest() {
     assertThrows(
         Timer.NoActiveTimerException.class,
-        () -> {
-          timer.stop();
-        });
+            timer::stop);
   }
 }

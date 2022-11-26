@@ -1,10 +1,12 @@
-package xyz.blaklinten.joggl.Model;
+package xyz.blaklinten.joggl.model;
+
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import org.springframework.stereotype.Component;
+import java.util.Objects;
 
 /**
  * This class is the internal representation of an Entry. It contains not only information about an
@@ -308,17 +310,10 @@ public class Entry {
    * @param value The value to update to.
    */
   public void update(Property prop, LocalDateTime value) {
-    switch (prop) {
-      case STARTTIME:
+    if (prop == Property.STARTTIME) {
         this.setStartTime(value);
-        break;
-
-      case ENDTIME:
+    } else if (prop ==  Property.ENDTIME){
         this.setEndTime(value);
-        break;
-
-      default:
-        return;
     }
   }
 
@@ -352,11 +347,7 @@ public class Entry {
    * @return The Duration of the current entry.
    */
   public Duration getDuration() {
-    if (endTime != null) {
-      return Duration.between(startTime, endTime);
-    } else {
-      return Duration.between(startTime, LocalDateTime.now());
-    }
+    return Duration.between(startTime, Objects.requireNonNullElseGet(endTime, LocalDateTime::now));
   }
 
   /**

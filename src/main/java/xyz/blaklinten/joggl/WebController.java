@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
-import xyz.blaklinten.joggl.Database.EntryDTO;
-import xyz.blaklinten.joggl.Model.AccumulatedTime;
-import xyz.blaklinten.joggl.Model.TimerStatus;
+import xyz.blaklinten.joggl.database.EntryDTO;
+import xyz.blaklinten.joggl.model.AccumulatedTime;
+import xyz.blaklinten.joggl.model.TimerStatus;
 
 /**
  * This is the web layer of the app. This class handles the REST-communication and makes sure to
@@ -99,7 +99,7 @@ public class WebController {
   @GetMapping("/sum-entries-by-name")
   public Mono<AccumulatedTime> SumEntriesByName(@RequestParam String name) {
     try {
-      return Mono.fromFuture(joggl.sumEntriesbyName(name));
+      return Mono.fromFuture(joggl.sumEntriesByName(name));
     } catch (NoSuchElementException e) {
       // TODO Is this a "good" exception to throw? Is there a better way to react when an error
       // occurs?
@@ -121,7 +121,7 @@ public class WebController {
   @GetMapping("/sum-entries-by-client")
   public Mono<AccumulatedTime> SumEntriesByClient(@RequestParam String client) {
     try {
-      return Mono.fromFuture(joggl.sumEntriesbyClient(client));
+      return Mono.fromFuture(joggl.sumEntriesByClient(client));
     } catch (NoSuchElementException e) {
       // TODO Is this a "good" exception to throw? Is there a better way to react when an error
       // occurs?
@@ -143,7 +143,7 @@ public class WebController {
   @GetMapping("/sum-entries-by-project")
   public Mono<AccumulatedTime> SumEntriesByProject(@RequestParam String project) {
     try {
-      return Mono.fromFuture(joggl.sumEntriesbyProject(project));
+      return Mono.fromFuture(joggl.sumEntriesByProject(project));
     } catch (NoSuchElementException e) {
       // TODO Is this a "good" exception to throw? Is there a better way to react when an error
       // occurs?

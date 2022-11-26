@@ -1,7 +1,7 @@
-package xyz.blaklinten.joggl.Model;
+package xyz.blaklinten.joggl.model;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -9,10 +9,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import org.junit.jupiter.api.Test;
 
 /** Unit test for an Entry */
-public class EntryTest {
+class EntryTest {
   /* For testing with single Entry */
   String client = "The Client";
   String name = "Test";
@@ -28,14 +27,14 @@ public class EntryTest {
   String project1 = "p1", project2 = "p2";
   String description1 = "d1", description2 = "d2";
 
-  LocalDateTime startTime1 = LocalDateTime.of(2021, 9, 1, 12, 30, 00);
+  LocalDateTime startTime1 = LocalDateTime.of(2021, 9, 1, 12, 30, 0);
   LocalDateTime endTime1 = startTime1.plusMinutes(30);
 
   String startTimeString1 = startTime1.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
   String endTimeString1 = endTime1.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
-  LocalDateTime startTime2 = LocalDateTime.of(2021, 11, 1, 12, 30, 00);
+  LocalDateTime startTime2 = LocalDateTime.of(2021, 11, 1, 12, 30, 0);
   LocalDateTime endTime2 = startTime2.plusHours(2);
 
   String startTimeString2 = startTime2.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
@@ -49,28 +48,28 @@ public class EntryTest {
 
   /* Single entry tests */
   @Test
-  public void startEntryTest() {
-    assertTrue(anEntry.getStartTime() == null);
+  void startEntryTest() {
+    Assertions.assertNull(anEntry.getStartTime());
     anEntry.update(Entry.Property.STARTTIME, LocalDateTime.now());
 
-    assertTrue(anEntry.getClient() == client);
-    assertTrue(anEntry.getDescription() == description);
-    assertTrue(anEntry.getProject() == project);
-    assertTrue(anEntry.getName() == name);
-    assertTrue(anEntry.getStartTime() != null);
-    assertTrue(LocalDateTime.now().isAfter(anEntry.getStartTime()));
-    assertTrue(anEntry.getEndTime() == null);
+    Assertions.assertSame(anEntry.getClient(), client);
+    Assertions.assertSame(anEntry.getDescription(), description);
+    Assertions.assertSame(anEntry.getProject(), project);
+    Assertions.assertSame(anEntry.getName(), name);
+    Assertions.assertNotNull(anEntry.getStartTime());
+    Assertions.assertNull(anEntry.getEndTime());
+    Assertions.assertTrue(LocalDateTime.now().isAfter(anEntry.getStartTime()));
   }
 
   @Test
-  public void CalculateDurationOfRunningEntryTest() {
+  void CalculateDurationOfRunningEntryTest() {
     anEntry.update(Entry.Property.STARTTIME, LocalDateTime.now());
-    assertTrue(anEntry.getEndTime() == null);
-    assertFalse(anEntry.getDuration().isZero());
+    Assertions.assertNull(anEntry.getEndTime());
+    Assertions.assertFalse(anEntry.getDuration().isZero());
   }
 
   @Test
-  public void endEntryTest() {
+  void endEntryTest() {
     final CountDownLatch waiter = new CountDownLatch(1);
 
     anEntry.update(Entry.Property.STARTTIME, LocalDateTime.now());
@@ -81,19 +80,19 @@ public class EntryTest {
     }
     anEntry.update(Entry.Property.ENDTIME, LocalDateTime.now());
 
-    assertTrue(anEntry.getClient() == client);
-    assertTrue(anEntry.getDescription() == description);
-    assertTrue(anEntry.getProject() == project);
-    assertTrue(anEntry.getName() == name);
-    assertTrue(anEntry.getStartTime() != null);
-    assertTrue(LocalDateTime.now().isAfter(anEntry.getStartTime()));
-    assertTrue(anEntry.getEndTime() != null);
-    assertTrue(anEntry.getEndTime().isAfter(anEntry.getStartTime()));
-    assertTrue(anEntry.getEndTime().isBefore(LocalDateTime.now()));
+    Assertions.assertSame(anEntry.getClient(), client);
+    Assertions.assertSame(anEntry.getDescription(), description);
+    Assertions.assertSame(anEntry.getProject(), project);
+    Assertions.assertSame(anEntry.getName(), name);
+    Assertions.assertNotNull(anEntry.getStartTime());
+    Assertions.assertTrue(LocalDateTime.now().isAfter(anEntry.getStartTime()));
+    Assertions.assertNotNull(anEntry.getEndTime());
+    Assertions.assertTrue(anEntry.getEndTime().isAfter(anEntry.getStartTime()));
+    Assertions.assertTrue(anEntry.getEndTime().isBefore(LocalDateTime.now()));
   }
 
   @Test
-  public void updateEntryTest() {
+  void updateEntryTest() {
     String newClient = "Another Client";
     String newName = "Updating test";
     String newProject = "Development 2.0";
@@ -104,45 +103,45 @@ public class EntryTest {
     LocalDateTime newEndTime = LocalDateTime.now();
 
     anEntry.update(Entry.Property.CLIENT, newClient);
-    assertTrue(anEntry.getClient() == newClient);
-    assertTrue(anEntry.getClient() != client);
+    Assertions.assertSame(anEntry.getClient(), newClient);
+    Assertions.assertNotSame(anEntry.getClient(), client);
 
     anEntry.update(Entry.Property.DESCRIPTION, newDescription);
-    assertTrue(anEntry.getDescription() == newDescription);
-    assertTrue(anEntry.getDescription() != description);
+    Assertions.assertSame(anEntry.getDescription(), newDescription);
+    Assertions.assertNotSame(anEntry.getDescription(), description);
 
     anEntry.update(Entry.Property.PROJECT, newProject);
-    assertTrue(anEntry.getProject() == newProject);
-    assertTrue(anEntry.getProject() != project);
+    Assertions.assertSame(anEntry.getProject(), newProject);
+    Assertions.assertNotSame(anEntry.getProject(), project);
 
     anEntry.update(Entry.Property.NAME, newName);
-    assertTrue(anEntry.getName() == newName);
-    assertTrue(anEntry.getName() != name);
+    Assertions.assertSame(anEntry.getName(), newName);
+    Assertions.assertNotSame(anEntry.getName(), name);
     anEntry.update(Entry.Property.STARTTIME, newStartTime);
-    assertTrue(anEntry.getStartTime() == newStartTime);
-    assertTrue(anEntry.getStartTime() != oldStartTime);
+    Assertions.assertSame(anEntry.getStartTime(), newStartTime);
+    Assertions.assertNotSame(anEntry.getStartTime(), oldStartTime);
 
     anEntry.update(Entry.Property.ENDTIME, newEndTime);
-    assertTrue(anEntry.getEndTime() == newEndTime);
-    assertTrue(anEntry.getEndTime() != oldEndTime);
+    Assertions.assertSame(anEntry.getEndTime(), newEndTime);
+    Assertions.assertNotSame(anEntry.getEndTime(), oldEndTime);
   }
 
   /* Multiple entries test */
   @Test
-  public void calculateDurationTest() {
+  void calculateDurationTest() {
 
-    assertTrue(entry1.getDuration().equals(Duration.ofMinutes(30)));
+    Assertions.assertEquals(entry1.getDuration(), Duration.ofMinutes(30));
   }
 
   @Test
-  public void sumEntriesTest() {
-    ArrayList<Entry> list = new ArrayList<Entry>();
+  void sumEntriesTest() {
+    ArrayList<Entry> list = new ArrayList();
     list.add(entry1);
     list.add(entry2);
 
     Duration sum = Entry.sum(list);
     Duration expected = Duration.ofMinutes(30).plus(Duration.ofHours(2));
 
-    assertTrue(sum.equals(expected));
+    Assertions.assertEquals(sum, expected);
   }
 }

@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import xyz.blaklinten.joggl.Database.EntryDTO;
-import xyz.blaklinten.joggl.Model.TimerStatus;
+import xyz.blaklinten.joggl.database.EntryDTO;
+import xyz.blaklinten.joggl.model.TimerStatus;
 
 @SpringBootTest
 public class JogglTest {
@@ -41,7 +41,7 @@ public class JogglTest {
   }
 
   @Test
-  public void startTimerTest() {
+  void startTimerTest() {
     try {
       EntryDTO startedEntry = joggl.startTimer(testEntry);
 
@@ -58,13 +58,11 @@ public class JogglTest {
   }
 
   @Test
-  public void stopTimerTest() {
+  void stopTimerTest() {
     try {
       assertThrows(
           Timer.NoActiveTimerException.class,
-          () -> {
-            joggl.stopTimer();
-          });
+          joggl::stopTimer);
 
       joggl.startTimer(testEntry);
 
@@ -82,7 +80,7 @@ public class JogglTest {
   }
 
   @Test
-  public void getStatusTest() {
+  void getStatusTest() {
     assertThrows(
         Timer.NoActiveTimerException.class,
         () -> {
@@ -95,12 +93,11 @@ public class JogglTest {
       TimerStatus status = joggl.getStatus();
 
       assertThat(status.getName()).isEqualTo(testEntry.getName());
-      assertThat(status.getSeconds()).isNotNull();
     } catch (Timer.TimerAlreadyRunningException | Timer.NoActiveTimerException e) {
       log.error(e.getMessage());
     }
   }
 
   @Test
-  public void sumEntriesbyNameTest() {}
+  void sumEntriesByNameTest() {}
 }
