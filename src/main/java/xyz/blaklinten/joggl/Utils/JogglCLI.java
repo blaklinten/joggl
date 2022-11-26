@@ -1,6 +1,6 @@
 package xyz.blaklinten.joggl.Utils;
 
-import xyz.blaklinten.joggl.Models.*;
+import xyz.blaklinten.joggl.Model.*;
 
 /** This is a simple CLI that can be used instead of the WebController. */
 public class JogglCLI {

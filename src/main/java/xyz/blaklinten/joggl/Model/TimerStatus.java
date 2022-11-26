@@ -1,4 +1,4 @@
-package xyz.blaklinten.joggl.Models;
+package xyz.blaklinten.joggl.Model;
 
 /**
  * This class is used to represent the status of a running timer. From this, a user can get all the

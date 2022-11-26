@@ -1,4 +1,4 @@
-package xyz.blaklinten.joggl.Models;
+package xyz.blaklinten.joggl.Model;
 
 import java.time.Duration;
 
