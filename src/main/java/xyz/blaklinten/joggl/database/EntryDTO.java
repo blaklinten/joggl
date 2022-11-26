@@ -1,4 +1,4 @@
-package xyz.blaklinten.joggl.Database;
+package xyz.blaklinten.joggl.database;
 
 import java.io.Serializable;
 import javax.persistence.Column;

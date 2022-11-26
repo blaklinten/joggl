@@ -1,4 +1,4 @@
-package xyz.blaklinten.joggl.Database;
+package xyz.blaklinten.joggl.database;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import xyz.blaklinten.joggl.Model.Entry;
+import xyz.blaklinten.joggl.model.Entry;
 
 /**
  * DatabaseHandler This class encapsulates the underlying database repository. An instance of a

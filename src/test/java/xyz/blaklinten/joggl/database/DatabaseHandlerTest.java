@@ -1,4 +1,4 @@
-package xyz.blaklinten.joggl.Database;
+package xyz.blaklinten.joggl.database;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import xyz.blaklinten.joggl.Joggl;
-import xyz.blaklinten.joggl.Model.Entry;
+import xyz.blaklinten.joggl.model.Entry;
 
 /** Unit test for the Databasehandler component. */
 @SpringBootTest
@@ -63,13 +63,13 @@ public class DatabaseHandlerTest {
   public void saveOneEntryToAndGetByIDFromDatabaseTest() {
 
     try {
-      Long id = dbHandler.save(joggl.entryToDTO(anEntry)).get();
+      Long id = dbHandler.save(joggl.fromEntry(anEntry)).get();
       Entry fromDatabase =
           dbHandler
               .getEntryByID(id)
               .thenApply(
                   dto -> {
-                    return joggl.DTOToEntry(dto);
+                    return joggl.fromDTO(dto);
                   })
               .get();
 
@@ -87,8 +87,8 @@ public class DatabaseHandlerTest {
 
   @Test
   public void saveEntriesToDatabaseAndGetByPropertyTest() {
-    dbHandler.save(joggl.entryToDTO(anEntry)).join();
-    dbHandler.save(joggl.entryToDTO(anEntryWithDifferentName)).join();
+    dbHandler.save(joggl.fromEntry(anEntry)).join();
+    dbHandler.save(joggl.fromEntry(anEntryWithDifferentName)).join();
 
     try {
       List<Entry> fromDatabaseWithName =
@@ -97,7 +97,7 @@ public class DatabaseHandlerTest {
               .thenApply(
                   list -> {
                     return list.stream()
-                        .map(es -> joggl.DTOToEntry(es))
+                        .map(es -> joggl.fromDTO(es))
                         .collect(Collectors.toList());
                   })
               .get();
@@ -118,7 +118,7 @@ public class DatabaseHandlerTest {
               .getEntriesBy(Entry.Property.NAME, anEntryWithDifferentName.getName())
               .get()
               .stream()
-              .map(es -> joggl.DTOToEntry(es))
+              .map(es -> joggl.fromDTO(es))
               .collect(Collectors.toList());
 
       assertTrue(
@@ -148,7 +148,7 @@ public class DatabaseHandlerTest {
 
       List<Entry> fromDatabaseByProject =
           dbHandler.getEntriesBy(Entry.Property.PROJECT, anEntry.getProject()).get().stream()
-              .map(es -> joggl.DTOToEntry(es))
+              .map(es -> joggl.fromDTO(es))
               .collect(Collectors.toList());
 
       assertTrue(fromDatabaseByProject.size() == 2);
@@ -161,14 +161,14 @@ public class DatabaseHandlerTest {
   @Test
   public void saveMultipleEntriesToDatabaseAndCountTest() {
 
-    dbHandler.save(joggl.entryToDTO(anEntry)).join();
-    dbHandler.save(joggl.entryToDTO(anEntryWithSameName)).join();
-    dbHandler.save(joggl.entryToDTO(anEntryWithDifferentName)).join();
+    dbHandler.save(joggl.fromEntry(anEntry)).join();
+    dbHandler.save(joggl.fromEntry(anEntryWithSameName)).join();
+    dbHandler.save(joggl.fromEntry(anEntryWithDifferentName)).join();
 
     try {
       List<Entry> fromDatabaseByName =
           dbHandler.getEntriesBy(Entry.Property.NAME, anEntry.getName()).get().stream()
-              .map(es -> joggl.DTOToEntry(es))
+              .map(es -> joggl.fromDTO(es))
               .collect(Collectors.toList());
       List<Entry> fromDatabaseAll = new ArrayList<Entry>();
       dbHandler
@@ -176,7 +176,7 @@ public class DatabaseHandlerTest {
           .findAll()
           .forEach(
               e -> {
-                fromDatabaseAll.add(joggl.DTOToEntry(e));
+                fromDatabaseAll.add(joggl.fromDTO(e));
               });
 
       assertThat(fromDatabaseByName.size()).isEqualTo(2);

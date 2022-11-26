@@ -8,16 +8,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import xyz.blaklinten.joggl.Database.DatabaseHandler;
-import xyz.blaklinten.joggl.Database.EntryDTO;
-import xyz.blaklinten.joggl.Model.AccumulatedTime;
-import xyz.blaklinten.joggl.Model.Entry;
-import xyz.blaklinten.joggl.Model.TimerStatus;
+import xyz.blaklinten.joggl.database.DatabaseHandler;
+import xyz.blaklinten.joggl.database.EntryDTO;
+import xyz.blaklinten.joggl.model.AccumulatedTime;
+import xyz.blaklinten.joggl.model.Entry;
+import xyz.blaklinten.joggl.model.TimerStatus;
 
 /** This is the top lever representation of a Joggl instance, i.e. the full application. */
 @Component
 public class Joggl {
-  private Logger log = LoggerFactory.getLogger(Joggl.class);
+  private final Logger log = LoggerFactory.getLogger(Joggl.class);
 
   @Autowired private Timer timer;
 
@@ -34,14 +34,13 @@ public class Joggl {
   public EntryDTO startTimer(EntryDTO entry) throws Timer.TimerAlreadyRunningException {
     log.info("Incoming start request");
 
-    Entry newEntry =
-        new Entry(entry.getName(), entry.getClient(), entry.getProject(), entry.getDescription());
+    Entry newEntry = fromDTO(entry);
 
     timer.start(newEntry);
 
-    log.info("Started entry " + newEntry.getName());
+    log.info("Started entry {}", newEntry.getName());
 
-    return entryToDTO(newEntry);
+    return fromEntry(newEntry);
   }
 
   /**
@@ -53,19 +52,15 @@ public class Joggl {
   public CompletableFuture<EntryDTO> stopTimer() throws Timer.NoActiveTimerException {
     log.info("Incoming stop request");
 
-    Entry stoppedEntry;
-    EntryDTO stoppedEntryDTO;
-
-    stoppedEntry = timer.stop();
-    stoppedEntryDTO = entryToDTO(stoppedEntry);
+    EntryDTO stoppedEntry = fromEntry(timer.stop());
 
     return dbHandler
-        .save(stoppedEntryDTO)
+        .save(stoppedEntry)
         .thenApply(
             id -> {
-              stoppedEntryDTO.updateID(id);
-              log.info("Stopped entry " + stoppedEntry.getName());
-              return stoppedEntryDTO;
+              stoppedEntry.updateID(id);
+              log.info("Stopped entry {}", stoppedEntry.getName());
+              return stoppedEntry;
             });
   }
 
@@ -94,7 +89,7 @@ public class Joggl {
    * @param name The name to use when searching for entries in the database.
    * @return The result of calling calculateSum with the provided name
    */
-  public CompletableFuture<AccumulatedTime> sumEntriesbyName(String name)
+  public CompletableFuture<AccumulatedTime> sumEntriesByName(String name)
       throws NoSuchElementException {
     log.info("Incoming sum-by-name request");
 
@@ -108,7 +103,7 @@ public class Joggl {
    * @param client The client to use when searching for entries in the database.
    * @return The result of calling calculateSum with the provided client
    */
-  public CompletableFuture<AccumulatedTime> sumEntriesbyClient(String client)
+  public CompletableFuture<AccumulatedTime> sumEntriesByClient(String client)
       throws NoSuchElementException {
     log.info("Incoming sum-by-client request");
 
@@ -124,7 +119,7 @@ public class Joggl {
    * @throws NoSuchElementException If no element with that property value was found in the
    *     database.
    */
-  public CompletableFuture<AccumulatedTime> sumEntriesbyProject(String project)
+  public CompletableFuture<AccumulatedTime> sumEntriesByProject(String project)
       throws NoSuchElementException {
     log.info("Incoming sum-by-project request");
 
@@ -144,18 +139,15 @@ public class Joggl {
     CompletableFuture<List<EntryDTO>> result = dbHandler.getEntriesBy(prop, value);
     CompletableFuture<Duration> sum =
         result.thenApply(
-            list -> {
-              return list.stream()
-                  .map(dto -> DTOToEntry(dto).getDuration())
-                  .reduce(Duration.ZERO, (acc, current) -> acc = acc.plus(current));
-            });
-    CompletableFuture<AccumulatedTime> accumulatedTime =
-        sum.thenApply(
-            totalTime -> {
-              return new AccumulatedTime(prop.toString(), value, totalTime);
-            });
-
-    return accumulatedTime;
+            entries ->
+              entries.stream()
+                  .map(entry -> fromDTO(entry).getDuration())
+                  .reduce(Duration.ZERO, (totalDuration, currentDuration) -> totalDuration = totalDuration.plus(currentDuration))
+            );
+    return sum.thenApply(
+            totalTime ->
+              new AccumulatedTime(prop.toString(), value, totalTime)
+            );
   }
 
   /**
@@ -165,7 +157,7 @@ public class Joggl {
    * @param entry The entry to convert
    * @return The entryDTO representation of the entry.
    */
-  public EntryDTO entryToDTO(Entry entry) {
+  public EntryDTO fromEntry(Entry entry) {
 
     return new EntryDTO(
         entry.getName(),
@@ -183,14 +175,25 @@ public class Joggl {
    * @param entryDTO The entryDTO to convert
    * @return The Entry representation of the entryDTO.
    */
-  public Entry DTOToEntry(EntryDTO entryDTO) {
-    return new Entry(
-        entryDTO.getId(),
-        entryDTO.getName(),
-        entryDTO.getClient(),
-        entryDTO.getProject(),
-        entryDTO.getDescription(),
-        entryDTO.getStartTime(),
-        entryDTO.getEndTime());
+  public Entry fromDTO(EntryDTO entryDTO) {
+    if (hasDatabaseId(entryDTO)) {
+      return new Entry(
+              entryDTO.getId(),
+              entryDTO.getName(),
+              entryDTO.getClient(),
+              entryDTO.getProject(),
+              entryDTO.getDescription(),
+              entryDTO.getStartTime(),
+              entryDTO.getEndTime());
+    } else {
+      return new Entry(
+              entryDTO.getName(),
+              entryDTO.getClient(),
+              entryDTO.getProject(),
+              entryDTO.getDescription());
+    }
+  }
+  private boolean hasDatabaseId(EntryDTO entryDTO) {
+    return entryDTO.getId() != null;
   }
 }

@@ -1,4 +1,4 @@
-package xyz.blaklinten.joggl.Utils;
+package xyz.blaklinten.joggl.utils;
 
 import java.io.IOException;
 import java.nio.file.*;
