@@ -58,7 +58,7 @@ public class Joggl {
         .save(stoppedEntry)
         .thenApply(
             id -> {
-              stoppedEntry.updateID(id);
+              stoppedEntry.setId(id);
               log.info("Stopped entry {}", stoppedEntry.getName());
               return stoppedEntry;
             });

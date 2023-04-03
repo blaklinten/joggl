@@ -18,24 +18,24 @@ import xyz.blaklinten.joggl.model.Entry;
 @Component
 public class DatabaseHandler {
 
-  private Logger log = LoggerFactory.getLogger(DatabaseHandler.class);
+  private final Logger log = LoggerFactory.getLogger(DatabaseHandler.class);
 
   @Autowired Repository repo;
 
   /**
-   * This methods saves a given entry to the database and returns the generated ID. This ID is
+   * These methods save a given entry to the database and returns the generated ID. This ID is
    * unique and can thus be used to reference this particular entry later.
    *
    * @param entryToSave The entry that is to be saved.
    * @return The unique ID given to the saved entry.
    */
   public CompletableFuture<Long> save(EntryDTO entryToSave) {
-    log.info("Saving entry " + entryToSave.getName() + " to database");
+    log.info("Saving entry {}s to db", entryToSave.getName());
     return CompletableFuture.supplyAsync(
         () -> {
           EntryDTO savedEntry = repo.save(entryToSave);
 
-          log.info("Got ID " + savedEntry.getId() + " from database");
+          log.info("Got ID {} from db", savedEntry.getId());
           return savedEntry.getId();
         });
   }
@@ -49,7 +49,7 @@ public class DatabaseHandler {
    * @throws NoSuchElementException If no entry with the specified ID is found.
    */
   public CompletableFuture<EntryDTO> getEntryByID(long id) throws NoSuchElementException {
-    log.info("Searching for entry with ID " + id);
+    log.info("Searching for entry with ID {}", id);
 
     return CompletableFuture.supplyAsync(
         () -> {
