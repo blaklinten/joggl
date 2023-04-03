@@ -49,6 +49,22 @@
 	  <artifactId>spring-boot-starter-test</artifactId>
 	  <scope>test</scope>
 	</dependency>
+      <dependency>
+          <groupId>org.projectlombok</groupId>
+          <artifactId>lombok</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.projectlombok</groupId>
+          <artifactId>lombok</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.projectlombok</groupId>
+          <artifactId>lombok</artifactId>
+      </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -80,7 +96,6 @@
 	      <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
           <configuration>
-            <fork>true</fork>
             <mainClass>xyz.blaklinten.joggl.App</mainClass>
           </configuration>
           <executions>

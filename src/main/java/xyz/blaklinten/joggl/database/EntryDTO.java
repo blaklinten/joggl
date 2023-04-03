@@ -1,5 +1,7 @@
 package xyz.blaklinten.joggl.database;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,71 +16,9 @@ import javax.persistence.Table;
  * the WebController.
  */
 @Entity
+@Data
 @Table(name = "entries")
 public class EntryDTO implements Serializable {
-
-  /**
-   * This method returns the unique ID of this entry.
-   *
-   * @return The unique ID of this entry.
-   */
-  public Long getId() {
-    return id;
-  }
-
-  /**
-   * This method returns the client of this entry.
-   *
-   * @return The client to which this entry belongs.
-   */
-  public String getClient() {
-    return client;
-  }
-
-  /**
-   * This method returns the description of this entry.
-   *
-   * @return The detailed description of this entry.
-   */
-  public String getDescription() {
-    return description;
-  }
-
-  /**
-   * This method returns the name of this entry.
-   *
-   * @return The name of this entry.
-   */
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * This method returns the project of this entry.
-   *
-   * @return The project to which this entry belongs.
-   */
-  public String getProject() {
-    return project;
-  }
-
-  /**
-   * This method returns the start time of the entry.
-   *
-   * @return The start time of this entry.
-   */
-  public String getStartTime() {
-    return startTime;
-  }
-
-  /**
-   * This method returns the end time of the entry.
-   *
-   * @return The end time of this entry.
-   */
-  public String getEndTime() {
-    return endTime;
-  }
 
   /** The unique ID of this entry. */
   @Id
@@ -135,9 +75,5 @@ public class EntryDTO implements Serializable {
     this.description = description;
     this.startTime = startTime;
     this.endTime = endTime;
-  }
-
-  public void updateID(Long newID) {
-    this.id = newID;
   }
 }

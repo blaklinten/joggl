@@ -1,5 +1,6 @@
 package xyz.blaklinten.joggl.model;
 
+import lombok.Builder;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -14,6 +15,15 @@ import java.util.Objects;
  */
 @Component
 public class Entry {
+
+  public Entry(String name, String client, String project, String description, LocalDateTime startTime, LocalDateTime endTime) {
+    this.name = name;
+    this.client = client;
+    this.project = project;
+    this.description = description;
+    this.startTime = startTime;
+    this.endTime = endTime;
+  }
 
   /** This enum represents the different properties, or fields, an entry has. */
   public enum Property {
@@ -77,11 +87,6 @@ public class Entry {
   private LocalDateTime startTime;
   private LocalDateTime endTime;
 
-  /** A constructor used when creating an Entry without parameters. */
-  public Entry() {
-    super();
-  }
-
   /**
    * This method allows a user to create a Entry when the ID is known and all information are
    * avaliable as Strings (exckluding the ID). This is very handy when creating Entries after a
@@ -95,6 +100,10 @@ public class Entry {
    * @param startTime The start time of the entry.
    * @param endTime The end time of the entry.
    */
+
+  public Entry(){
+    super();
+  }
   public Entry(
       Long id,
       String name,
@@ -152,7 +161,7 @@ public class Entry {
   /**
    * This method sets the name of the current entry.
    *
-   * @param String The name of the current entry.
+   * @param name The name of the current entry.
    */
   private void setName(String name) {
     this.name = name;
@@ -170,7 +179,7 @@ public class Entry {
   /**
    * This method sets the client of the current entry.
    *
-   * @param String The client of the current entry.
+   * @param client The client of the current entry.
    */
   private void setClient(String client) {
     this.client = client;
@@ -188,7 +197,7 @@ public class Entry {
   /**
    * This method sets the description of the current entry.
    *
-   * @param String The description of the current entry.
+   * @param description The description of the current entry.
    */
   private void setDescription(String description) {
     this.description = description;
@@ -206,7 +215,7 @@ public class Entry {
   /**
    * This method sets the project of the current entry.
    *
-   * @param String The project of the current entry.
+   * @param project The project of the current entry.
    */
   private void setProject(String project) {
     this.project = project;
@@ -299,7 +308,6 @@ public class Entry {
         break;
 
       default:
-        return;
     }
   }
 
