@@ -41,8 +41,8 @@ class DatabaseHandlerTest {
     anEntryWithDifferentName.update(Entry.Property.STARTTIME, anEntry.getStartTime());
     anEntryWithDifferentName.update(Entry.Property.ENDTIME, anEntry.getEndTime());
 
-    dbHandler.save(joggl.fromEntry(anEntry)).join();
-    dbHandler.save(joggl.fromEntry(anEntryWithDifferentName)).join();
+    dbHandler.save(anEntry.toDTO()).join();
+    dbHandler.save(anEntryWithDifferentName.toDTO()).join();
 
     try {
       List<Entry> fromDatabaseWithName =
@@ -50,7 +50,7 @@ class DatabaseHandlerTest {
               .getEntriesBy(Entry.Property.NAME, anEntry.getName())
               .thenApply(
                   list -> {
-                    return list.stream().map(es -> joggl.fromDTO(es)).collect(Collectors.toList());
+                    return list.stream().map(Entry::from).collect(Collectors.toList());
                   })
               .get();
 
@@ -69,7 +69,7 @@ class DatabaseHandlerTest {
               .getEntriesBy(Entry.Property.NAME, anEntryWithDifferentName.getName())
               .get()
               .stream()
-              .map(es -> joggl.fromDTO(es))
+              .map(Entry::from)
               .collect(Collectors.toList());
 
       Assertions.assertEquals(
@@ -90,7 +90,7 @@ class DatabaseHandlerTest {
 
       List<Entry> fromDatabaseByProject =
           dbHandler.getEntriesBy(Entry.Property.PROJECT, anEntry.getProject()).get().stream()
-              .map(es -> joggl.fromDTO(es))
+              .map(Entry::from)
               .collect(Collectors.toList());
 
       Assertions.assertEquals(2, fromDatabaseByProject.size());
@@ -113,14 +113,14 @@ class DatabaseHandlerTest {
     anEntryWithDifferentName.update(Entry.Property.STARTTIME, anEntry.getStartTime());
     anEntryWithDifferentName.update(Entry.Property.ENDTIME, anEntry.getEndTime());
 
-    dbHandler.save(joggl.fromEntry(anEntry)).join();
-    dbHandler.save(joggl.fromEntry(anEntryWithSameName)).join();
-    dbHandler.save(joggl.fromEntry(anEntryWithDifferentName)).join();
+    dbHandler.save(anEntry.toDTO()).join();
+    dbHandler.save(anEntryWithSameName.toDTO()).join();
+    dbHandler.save(anEntryWithDifferentName.toDTO()).join();
 
     try {
       List<Entry> fromDatabaseByName =
           dbHandler.getEntriesBy(Entry.Property.NAME, anEntry.getName()).get().stream()
-              .map(es -> joggl.fromDTO(es))
+              .map(Entry::from)
               .collect(Collectors.toList());
       List<Entry> fromDatabaseAll = new ArrayList<Entry>();
       dbHandler
@@ -128,7 +128,7 @@ class DatabaseHandlerTest {
           .findAll()
           .forEach(
               e -> {
-                fromDatabaseAll.add(joggl.fromDTO(e));
+                fromDatabaseAll.add(Entry.from(e));
               });
 
       assertThat(fromDatabaseByName).hasSize(2);
