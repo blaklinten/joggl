@@ -1,7 +1,7 @@
 package xyz.blaklinten.joggl.model;
 
-import lombok.Builder;
 import org.springframework.stereotype.Component;
+import xyz.blaklinten.joggl.database.EntryDTO;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -16,69 +16,6 @@ import java.util.Objects;
 @Component
 public class Entry {
 
-  public Entry(String name, String client, String project, String description, LocalDateTime startTime, LocalDateTime endTime) {
-    this.name = name;
-    this.client = client;
-    this.project = project;
-    this.description = description;
-    this.startTime = startTime;
-    this.endTime = endTime;
-  }
-
-  /** This enum represents the different properties, or fields, an entry has. */
-  public enum Property {
-    /** The name of an Entry. */
-    NAME,
-
-    /** The client, to which an Entry belongs. */
-    CLIENT,
-
-    /** The project, to which an Entry belongs. */
-    PROJECT,
-
-    /** The description of an Entry. */
-    DESCRIPTION,
-
-    /** The start time of an Entry. */
-    STARTTIME,
-
-    /** The end time of an Entry. */
-    ENDTIME;
-
-    /**
-     * This method allows a user to use the actual name, represented by a String, of a property
-     * instead of the corresponding ordinal.
-     */
-    @Override
-    public String toString() {
-      String name;
-      switch (ordinal()) {
-        case 0:
-          name = "name";
-          break;
-        case 1:
-          name = "client";
-          break;
-        case 2:
-          name = "project";
-          break;
-        case 3:
-          name = "description";
-          break;
-        case 4:
-          name = "start time";
-          break;
-        case 5:
-          name = "end time";
-          break;
-        default:
-          name = "";
-          break;
-      }
-      return name;
-    }
-  }
-
   private Long id;
   private String name;
   private String client;
@@ -87,6 +24,24 @@ public class Entry {
   private LocalDateTime startTime;
   private LocalDateTime endTime;
 
+  public Entry(
+      String name,
+      String client,
+      String project,
+      String description,
+      LocalDateTime startTime,
+      LocalDateTime endTime) {
+    this.name = name;
+    this.client = client;
+    this.project = project;
+    this.description = description;
+    this.startTime = startTime;
+    this.endTime = endTime;
+  }
+
+  public Entry() {
+    super();
+  }
   /**
    * This method allows a user to create a Entry when the ID is known and all information are
    * avaliable as Strings (exckluding the ID). This is very handy when creating Entries after a
@@ -100,10 +55,6 @@ public class Entry {
    * @param startTime The start time of the entry.
    * @param endTime The end time of the entry.
    */
-
-  public Entry(){
-    super();
-  }
   public Entry(
       Long id,
       String name,
@@ -138,6 +89,55 @@ public class Entry {
     this.description = description;
     this.startTime = null;
     this.endTime = null;
+  }
+
+  /**
+   * This method is used to sum the durations of all entries in a given list.
+   *
+   * @param entries The list of entries, which durations is to be accumulated.
+   * @return The total duration of the entries in the given list.
+   */
+  public static Duration sum(List<Entry> entries) {
+    Duration result = Duration.ZERO;
+    for (Entry e : entries) {
+      result = result.plus(e.getDuration());
+    }
+    return result;
+  }
+
+  public static Entry from(EntryDTO entryDTO) {
+    if (hasDatabaseId(entryDTO)) {
+      return new Entry(
+          entryDTO.getId(),
+          entryDTO.getName(),
+          entryDTO.getClient(),
+          entryDTO.getProject(),
+          entryDTO.getDescription(),
+          entryDTO.getStartTime(),
+          entryDTO.getEndTime());
+    } else {
+      return new Entry(
+          entryDTO.getName(),
+          entryDTO.getClient(),
+          entryDTO.getProject(),
+          entryDTO.getDescription());
+    }
+  }
+
+  private static boolean hasDatabaseId(EntryDTO entryDTO) {
+    return entryDTO.getId() != null;
+  }
+
+  public EntryDTO toDTO() {
+    return EntryDTO.builder()
+        .id(this.id)
+        .name(this.name)
+        .client(this.client)
+        .project(this.project)
+        .description(this.description)
+        .startTime(this.startTime.toString())
+        .endTime(this.endTime != null ? this.endTime.toString() : "null")
+        .build();
   }
 
   /**
@@ -231,6 +231,15 @@ public class Entry {
   }
 
   /**
+   * This method sets the start time of the current entry.
+   *
+   * @param startTime The start time of the current entry.
+   */
+  private void setStartTime(LocalDateTime startTime) {
+    this.startTime = startTime;
+  }
+
+  /**
    * This method returns the start time of the current entry, as a string.
    *
    * @return The start time of the current entry.
@@ -244,21 +253,21 @@ public class Entry {
   }
 
   /**
-   * This method sets the start time of the current entry.
-   *
-   * @param startTime The start time of the current entry.
-   */
-  private void setStartTime(LocalDateTime startTime) {
-    this.startTime = startTime;
-  }
-
-  /**
    * This method returns the end time of the current entry.
    *
    * @return The end time of the current entry.
    */
   public LocalDateTime getEndTime() {
     return endTime;
+  }
+
+  /**
+   * This method sets the end time of the current entry.
+   *
+   * @param endTime The end time of the current entry.
+   */
+  private void setEndTime(LocalDateTime endTime) {
+    this.endTime = endTime;
   }
 
   /**
@@ -272,15 +281,6 @@ public class Entry {
     } else {
       return "null";
     }
-  }
-
-  /**
-   * This method sets the end time of the current entry.
-   *
-   * @param endTime The end time of the current entry.
-   */
-  private void setEndTime(LocalDateTime endTime) {
-    this.endTime = endTime;
   }
 
   /**
@@ -318,10 +318,14 @@ public class Entry {
    * @param value The value to update to.
    */
   public void update(Property prop, LocalDateTime value) {
-    if (prop == Property.STARTTIME) {
+    switch (prop) {
+      case STARTTIME:
         this.setStartTime(value);
-    } else if (prop ==  Property.ENDTIME){
+        break;
+      case ENDTIME:
         this.setEndTime(value);
+        break;
+      default:
     }
   }
 
@@ -358,17 +362,57 @@ public class Entry {
     return Duration.between(startTime, Objects.requireNonNullElseGet(endTime, LocalDateTime::now));
   }
 
-  /**
-   * This method is used to sum the durations of all entries in a given list.
-   *
-   * @param entries The list of entries, which durations is to be accumulated.
-   * @return The total duration of the entries in the given list.
-   */
-  public static Duration sum(List<Entry> entries) {
-    Duration result = Duration.ZERO;
-    for (Entry e : entries) {
-      result = result.plus(e.getDuration());
+  /** This enum represents the different properties, or fields, an entry has. */
+  public enum Property {
+    /** The name of an Entry. */
+    NAME,
+
+    /** The client, to which an Entry belongs. */
+    CLIENT,
+
+    /** The project, to which an Entry belongs. */
+    PROJECT,
+
+    /** The description of an Entry. */
+    DESCRIPTION,
+
+    /** The start time of an Entry. */
+    STARTTIME,
+
+    /** The end time of an Entry. */
+    ENDTIME;
+
+    /**
+     * This method allows a user to use the actual name, represented by a String, of a property
+     * instead of the corresponding ordinal.
+     */
+    @Override
+    public String toString() {
+      String name;
+      switch (ordinal()) {
+        case 0:
+          name = "name";
+          break;
+        case 1:
+          name = "client";
+          break;
+        case 2:
+          name = "project";
+          break;
+        case 3:
+          name = "description";
+          break;
+        case 4:
+          name = "start time";
+          break;
+        case 5:
+          name = "end time";
+          break;
+        default:
+          name = "";
+          break;
+      }
+      return name;
     }
-    return result;
   }
 }

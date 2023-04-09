@@ -12,7 +12,9 @@ public class EntryCreator {
     var client = "The Client";
     var project = "Test project";
     var description = "This is a test entry";
-    return new Entry(name, client, project, description, LocalDateTime.now(), LocalDateTime.now().minusHours(1));
+    var starTime = LocalDateTime.now();
+    var endTime = LocalDateTime.now().minusHours(1);
+    return new Entry(name, client, project, description, starTime, endTime);
   }
 
   public static Entry createRandomEntry() {

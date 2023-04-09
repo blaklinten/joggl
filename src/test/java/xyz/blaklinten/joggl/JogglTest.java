@@ -11,12 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import xyz.blaklinten.joggl.database.EntryDTO;
+import xyz.blaklinten.joggl.helper.EntryCreator;
 import xyz.blaklinten.joggl.model.TimerStatus;
 
 @SpringBootTest
-public class JogglTest {
+class JogglTest {
 
-  private Logger log = LoggerFactory.getLogger(JogglTest.class);
+  private final Logger log = LoggerFactory.getLogger(JogglTest.class);
 
   @Autowired private Joggl joggl;
 
@@ -24,14 +25,7 @@ public class JogglTest {
 
   @BeforeEach
   public void initEntry() {
-    String name = "A name";
-    String client = "The Client";
-    String project = "Development";
-    String description = "A bunch of tests";
-    String startTime = null;
-    String endTime = null;
-
-    testEntry = new EntryDTO(name, client, project, description, startTime, endTime);
+    testEntry = EntryCreator.createDefaultEntry().toDTO();
   }
 
   @AfterEach
@@ -43,7 +37,7 @@ public class JogglTest {
   @Test
   void startTimerTest() {
     try {
-      EntryDTO startedEntry = joggl.startTimer(testEntry);
+      var startedEntry = joggl.startTimer(testEntry);
 
       assertThat(startedEntry.getName()).isEqualTo(testEntry.getName());
       assertThat(startedEntry.getClient()).isEqualTo(testEntry.getClient());

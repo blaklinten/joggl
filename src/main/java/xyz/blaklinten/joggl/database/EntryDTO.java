@@ -1,6 +1,9 @@
 package xyz.blaklinten.joggl.database;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -18,6 +21,9 @@ import javax.persistence.Table;
 @Entity
 @Data
 @Table(name = "entries")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class EntryDTO implements Serializable {
 
   /** The unique ID of this entry. */
@@ -48,32 +54,4 @@ public class EntryDTO implements Serializable {
   /** The end time of this entry. */
   @Column(name = "endTime")
   private String endTime;
-
-  /** This is an empty constructor. */
-  protected EntryDTO() {}
-
-  /**
-   * This constructor creates an EntryDTO based on the necessary information.
-   *
-   * @param name The name of the entry, can be null.
-   * @param client The name of the entry, can be null.
-   * @param project The name of the entry, can be null.
-   * @param description The name of the entry, can be null.
-   * @param startTime The name of the entry, can be null.
-   * @param endTime The name of the entry, can be null.
-   */
-  public EntryDTO(
-      String name,
-      String client,
-      String project,
-      String description,
-      String startTime,
-      String endTime) {
-    this.name = name;
-    this.client = client;
-    this.project = project;
-    this.description = description;
-    this.startTime = startTime;
-    this.endTime = endTime;
-  }
 }

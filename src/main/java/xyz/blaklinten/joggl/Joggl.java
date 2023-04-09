@@ -26,21 +26,21 @@ public class Joggl {
   /**
    * This method accesses the internal timer object and starts it from a given entry.
    *
-   * @param entry The entry which to use as a base whe starting the timer.
+   * @param dto The entry which to use as a base whe starting the timer.
    * @return A representation of the started entry.
    * @throws Timer.TimerAlreadyRunningException If a timer was already running and thus preventing a
    *     new one to be started.
    */
-  public EntryDTO startTimer(EntryDTO entry) throws Timer.TimerAlreadyRunningException {
+  public EntryDTO startTimer(EntryDTO dto) throws Timer.TimerAlreadyRunningException {
     log.info("Incoming start request");
 
-    Entry newEntry = fromDTO(entry);
+    var newEntry = Entry.from(dto);
 
     timer.start(newEntry);
 
     log.info("Started entry {}", newEntry.getName());
 
-    return fromEntry(newEntry);
+    return newEntry.toDTO();
   }
 
   /**
@@ -52,15 +52,16 @@ public class Joggl {
   public CompletableFuture<EntryDTO> stopTimer() throws Timer.NoActiveTimerException {
     log.info("Incoming stop request");
 
-    EntryDTO stoppedEntry = fromEntry(timer.stop());
+    var stoppedEntry = timer.stop();
+    var entryDTO = stoppedEntry.toDTO();
 
     return dbHandler
-        .save(stoppedEntry)
+        .save(entryDTO)
         .thenApply(
             id -> {
-              stoppedEntry.setId(id);
-              log.info("Stopped entry {}", stoppedEntry.getName());
-              return stoppedEntry;
+              entryDTO.setId(id);
+              log.info("Stopped entry {}", entryDTO.getName());
+              return entryDTO;
             });
   }
 
@@ -141,7 +142,7 @@ public class Joggl {
         result.thenApply(
             entries ->
               entries.stream()
-                  .map(entry -> fromDTO(entry).getDuration())
+                  .map(dto -> Entry.from(dto).getDuration())
                   .reduce(Duration.ZERO, (totalDuration, currentDuration) -> totalDuration = totalDuration.plus(currentDuration))
             );
     return sum.thenApply(
@@ -150,50 +151,4 @@ public class Joggl {
             );
   }
 
-  /**
-   * This method is used to convert an entry into something more convenient for serialization (i.e.
-   * database and JSON usage); an entryDTO.
-   *
-   * @param entry The entry to convert
-   * @return The entryDTO representation of the entry.
-   */
-  public EntryDTO fromEntry(Entry entry) {
-
-    return new EntryDTO(
-        entry.getName(),
-        entry.getClient(),
-        entry.getProject(),
-        entry.getDescription(),
-        entry.getStartTimeAsString(),
-        entry.getEndTimeAsString());
-  }
-
-  /**
-   * This method is used to convert an entryDTO into something more convenient for internal use,
-   * i.e. an Entry.
-   *
-   * @param entryDTO The entryDTO to convert
-   * @return The Entry representation of the entryDTO.
-   */
-  public Entry fromDTO(EntryDTO entryDTO) {
-    if (hasDatabaseId(entryDTO)) {
-      return new Entry(
-              entryDTO.getId(),
-              entryDTO.getName(),
-              entryDTO.getClient(),
-              entryDTO.getProject(),
-              entryDTO.getDescription(),
-              entryDTO.getStartTime(),
-              entryDTO.getEndTime());
-    } else {
-      return new Entry(
-              entryDTO.getName(),
-              entryDTO.getClient(),
-              entryDTO.getProject(),
-              entryDTO.getDescription());
-    }
-  }
-  private boolean hasDatabaseId(EntryDTO entryDTO) {
-    return entryDTO.getId() != null;
-  }
 }
