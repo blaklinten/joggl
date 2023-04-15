@@ -22,7 +22,7 @@ import xyz.blaklinten.joggl.model.TimerStatus;
 @RestController
 public class WebController {
 
-  final String ORIGINS = "http://localhost:3000";
+  static final String ORIGINS = "http://localhost:3000";
 
   @Autowired Joggl joggl;
 

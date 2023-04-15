@@ -11,7 +11,7 @@ import xyz.blaklinten.joggl.model.TimerStatus;
 @Component
 public class Timer {
 
-  private Logger log = LoggerFactory.getLogger(Timer.class);
+  private final Logger log = LoggerFactory.getLogger(Timer.class);
 
   private Entry entry = null;
 
@@ -92,7 +92,7 @@ public class Timer {
    * @return True if the timer is running, False otherwise.
    */
   public Boolean isRunning() {
-    return (entry != null) ? true : false;
+    return entry != null;
   }
 
   /**
@@ -102,11 +102,11 @@ public class Timer {
    * @return True if the timer is not running, False otherwise.
    */
   public Boolean isNotRunning() {
-    return (entry == null) ? true : false;
+    return entry == null;
   }
 
   /** This class is a wrapper class and defines a custom exception. */
-  public class NoActiveTimerException extends Exception {
+  public static class NoActiveTimerException extends Exception {
     /**
      * This exception communicates that the user has tried to access a running timer when the timer
      * in fact was not running, e.g. stopping a timer before starting it or getting the status when
@@ -120,7 +120,7 @@ public class Timer {
   }
 
   /** This class is a wrapper class and defines a custom exception. */
-  public class TimerAlreadyRunningException extends Exception {
+  public static class TimerAlreadyRunningException extends Exception {
     /**
      * This exception communicates that the user has tried to start a timer when the timer in fact
      * was already running.

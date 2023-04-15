@@ -150,5 +150,4 @@ public class Joggl {
               new AccumulatedTime(prop.toString(), value, totalTime)
             );
   }
-
 }
